@@ -28,6 +28,9 @@ public class DayNightCycleManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI statusText;
 
+    [Header("Result Manager")]
+    [SerializeField] private PrototypeResultManager resultManager;
+
     private GamePhase currentPhase;
     private float currentTimer;
     private bool isTimerRunning;
@@ -114,19 +117,22 @@ public class DayNightCycleManager : MonoBehaviour
         currentPhase = GamePhase.DemoComplete;
         isTimerRunning = false;
 
-        if (enemyBear != null)
-        {
-            enemyBear.SetActive(false);
-        }
-
-        UpdatePhaseUI("DEMO COMPLETE", "Night survived! Prototype demo complete.");
+        // Do not update phaseText/statusText here.
+        // The result panel already shows the demo completion message.
 
         if (timerText != null)
         {
             timerText.text = "Time: 0";
         }
 
-        Debug.Log("Demo complete. Night survived.");
+        if (resultManager != null)
+        {
+            resultManager.ShowNightSurvived();
+        }
+        else
+        {
+            Debug.Log("Demo complete. Night survived.");
+        }
     }
 
     private void HandlePhaseTimerFinished()

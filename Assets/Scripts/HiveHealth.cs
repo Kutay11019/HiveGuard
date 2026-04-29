@@ -9,6 +9,9 @@ public class HiveHealth : MonoBehaviour
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI hiveHealthText;
 
+    [Header("Result Manager")]
+    [SerializeField] private PrototypeResultManager resultManager;
+
     private int currentHealth;
 
     public bool IsDestroyed => currentHealth <= 0;
@@ -54,5 +57,10 @@ public class HiveHealth : MonoBehaviour
     private void HandleHiveDestroyed()
     {
         Debug.Log("Hive collapsed! Game Over.");
+
+        if (resultManager != null)
+        {
+            resultManager.ShowGameOver();
+        }
     }
 }
