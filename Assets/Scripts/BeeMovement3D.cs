@@ -49,14 +49,7 @@ public class BeeMovement3D : MonoBehaviour
         }
 
         // Up - Down movement
-        if (keyboard.spaceKey.isPressed)
-        {
-            moveY = 1f;
-        }
-        else if (keyboard.leftCtrlKey.isPressed || keyboard.rightCtrlKey.isPressed)
-        {
-            moveY = -1f;
-        }
+        
 
         movementInput = new Vector3(moveX, moveY, moveZ).normalized;
     }
