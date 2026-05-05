@@ -28,12 +28,23 @@ public class DayNightCycleManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI statusText;
 
+    [Header("Objective UI")]
+    [SerializeField] private DayObjectiveUI dayObjectiveUI;
+
     [Header("Result Manager")]
     [SerializeField] private PrototypeResultManager resultManager;
 
     private GamePhase currentPhase;
     private float currentTimer;
     private bool isTimerRunning;
+
+    private void Awake()
+    {
+        if (dayObjectiveUI == null)
+        {
+            dayObjectiveUI = FindFirstObjectByType<DayObjectiveUI>();
+        }
+    }
 
     private void Start()
     {
@@ -81,6 +92,11 @@ public class DayNightCycleManager : MonoBehaviour
         UpdatePhaseUI("DAY", "Collect pollen and deliver it to the hive!");
         UpdateTimerUI();
 
+        if (dayObjectiveUI != null)
+        {
+            dayObjectiveUI.ShowDayObjective();
+        }
+
         Debug.Log("Day phase started.");
     }
 
@@ -109,6 +125,11 @@ public class DayNightCycleManager : MonoBehaviour
         UpdatePhaseUI("NIGHT", "Defend the hive from bears!");
         UpdateTimerUI();
 
+        if (dayObjectiveUI != null)
+        {
+            dayObjectiveUI.ShowNightObjective();
+        }
+
         Debug.Log("Night phase started.");
     }
 
@@ -117,12 +138,14 @@ public class DayNightCycleManager : MonoBehaviour
         currentPhase = GamePhase.DemoComplete;
         isTimerRunning = false;
 
-        // Do not update phaseText/statusText here.
-        // The result panel already shows the demo completion message.
-
         if (timerText != null)
         {
             timerText.text = "Time: 0";
+        }
+
+        if (dayObjectiveUI != null)
+        {
+            dayObjectiveUI.HideObjective();
         }
 
         if (resultManager != null)

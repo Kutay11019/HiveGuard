@@ -8,6 +8,7 @@ public class BeeAttack3D : MonoBehaviour
     [SerializeField] private float attackRange = 1.8f;
     [SerializeField] private int attackDamage = 1;
     [SerializeField] private float attackCooldown = 0.6f;
+    [SerializeField] private LayerMask bearLayer;
 
     [Header("Input Settings")]
     [SerializeField] private bool useLeftMouse = true;
@@ -71,7 +72,11 @@ public class BeeAttack3D : MonoBehaviour
 
     private void DealDamageToBearsInRange()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);
+        Collider[] hitColliders = Physics.OverlapSphere(
+            transform.position,
+            attackRange,
+            bearLayer
+        );
 
         HashSet<BearHealth> damagedBears = new HashSet<BearHealth>();
 
