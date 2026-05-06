@@ -1,168 +1,313 @@
-using System.Collections;
 using UnityEngine;
 
 public class BearEnemyAI : MonoBehaviour
 {
-    [Header("Target")]
-    [SerializeField] private Transform hiveAttackPoint;
+    private enum BearTargetType
+    {
+        None,
+        Bee,
+        Hive
+    }
 
-    [Header("References")]
-    [SerializeField] private Animator bearAnimator;
-    [SerializeField] private Rigidbody rb;
+    [Header("Targets")]
+    [SerializeField] private Transform beeTarget;
+    [SerializeField] private Transform hiveTarget;
+
+    [Header("Target Selection")]
+    [SerializeField] private float beeDetectionRange = 4f;
 
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 2.2f;
+    [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float rotationSpeed = 8f;
-    [SerializeField] private float stopDistance = 0.35f;
 
     [Header("Attack")]
-    [SerializeField] private float attackCooldown = 1.5f;
-    [SerializeField] private float attackDamageDelay = 0.35f;
-    [SerializeField] private int hiveDamageAmount = 1;
+    [SerializeField] private float attackRange = 1.5f;
+    [SerializeField] private float attackCooldown = 1f;
+    [SerializeField] private int beeDamage = 20;
+    [SerializeField] private int hiveDamage = 40;
 
-    [Header("Animation State Names")]
-    [SerializeField] private string idleStateName = "Idle";
-    [SerializeField] private string runStateName = "Walk Forward";
-    [SerializeField] private string attackStateName = "Attack1";
+    [Header("Animation")]
+    [SerializeField] private Animator bearAnimator;
 
-    private bool isAttacking;
-    private float lastAttackTime;
+    [Header("Movement Animation States")]
+    [SerializeField] private string idleStateName = "Combat Idle";
+    [SerializeField] private string moveStateName = "RunForward";
+
+    [Header("Random Attack Animation States")]
+    [SerializeField] private string[] attackStateNames =
+    {
+        "Attack1",
+        "Attack2",
+        "Attack3",
+        "Attack5"
+    };
+
+    [SerializeField] private float animationCrossFadeDuration = 0.08f;
+
+    private Transform currentTarget;
+    private BearTargetType currentTargetType = BearTargetType.None;
+
+    private float lastAttackTime = -999f;
+    private int lastAttackIndex = -1;
+    private bool isMovingAnimationPlaying = false;
 
     private void Awake()
     {
-        if (rb == null)
-            rb = GetComponent<Rigidbody>();
-
         if (bearAnimator == null)
+        {
             bearAnimator = GetComponentInChildren<Animator>();
-
-        if (bearAnimator != null)
-            bearAnimator.applyRootMotion = false;
-    }
-
-    private void Start()
-    {
-        if (hiveAttackPoint == null)
-        {
-            GameObject point = GameObject.Find("BearAttackPoint");
-
-            if (point != null)
-                hiveAttackPoint = point.transform;
-            else
-                Debug.LogWarning("BearEnemyAI: BearAttackPoint bulunamadı.");
         }
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        if (hiveAttackPoint == null || isAttacking)
-            return;
+        SelectTarget();
 
-        Vector3 targetPosition = hiveAttackPoint.position;
-        Vector3 direction = targetPosition - transform.position;
-        direction.y = 0f;
-
-        float distance = direction.magnitude;
-
-        if (distance > stopDistance)
+        if (currentTarget == null)
         {
-            MoveToTarget(direction);
+            PlayIdleAnimation();
+            return;
+        }
+
+        MoveOrAttackCurrentTarget();
+    }
+
+    private void SelectTarget()
+    {
+        if (beeTarget != null)
+        {
+            float distanceToBee = Vector3.Distance(transform.position, beeTarget.position);
+
+            if (distanceToBee <= beeDetectionRange)
+            {
+                currentTarget = beeTarget;
+                currentTargetType = BearTargetType.Bee;
+                return;
+            }
+        }
+
+        if (hiveTarget != null)
+        {
+            currentTarget = hiveTarget;
+            currentTargetType = BearTargetType.Hive;
+            return;
+        }
+
+        currentTarget = null;
+        currentTargetType = BearTargetType.None;
+    }
+
+    private void MoveOrAttackCurrentTarget()
+    {
+        float distanceToTarget = Vector3.Distance(transform.position, currentTarget.position);
+
+        FaceTarget(currentTarget);
+
+        if (distanceToTarget > attackRange)
+        {
+            MoveTowardsTarget(currentTarget);
+            PlayMoveAnimation();
         }
         else
         {
-            StopBear();
-            FaceHive();
-            TryAttackHive();
+            PlayIdleAnimation();
+            TryAttack();
         }
     }
 
-    private void MoveToTarget(Vector3 direction)
+    private void MoveTowardsTarget(Transform target)
     {
-        Vector3 moveDirection = direction.normalized;
-
-        Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            targetRotation,
-            rotationSpeed * Time.fixedDeltaTime
-        );
-
-        Vector3 nextPosition = transform.position + moveDirection * moveSpeed * Time.fixedDeltaTime;
-
-        if (rb != null)
-            rb.MovePosition(nextPosition);
-        else
-            transform.position = nextPosition;
-
-        PlayAnimation(runStateName, 0.15f);
-    }
-
-    private void FaceHive()
-    {
-        HiveHealth hiveHealth = hiveAttackPoint.GetComponentInParent<HiveHealth>();
-
-        if (hiveHealth == null)
-            return;
-
-        Vector3 direction = hiveHealth.transform.position - transform.position;
+        Vector3 direction = target.position - transform.position;
         direction.y = 0f;
 
         if (direction.sqrMagnitude < 0.001f)
+        {
             return;
+        }
 
-        Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
+        direction.Normalize();
+
+        transform.position += direction * moveSpeed * Time.deltaTime;
+    }
+
+    private void FaceTarget(Transform target)
+    {
+        Vector3 direction = target.position - transform.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude < 0.001f)
+        {
+            return;
+        }
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
 
         transform.rotation = Quaternion.Slerp(
             transform.rotation,
             targetRotation,
-            rotationSpeed * Time.fixedDeltaTime
+            rotationSpeed * Time.deltaTime
         );
     }
 
-    private void TryAttackHive()
+    private void TryAttack()
     {
         if (Time.time < lastAttackTime + attackCooldown)
         {
-            PlayAnimation(idleStateName, 0.15f);
             return;
         }
 
         lastAttackTime = Time.time;
-        StartCoroutine(AttackHiveRoutine());
+
+        PlayRandomAttackAnimation();
+
+        if (currentTargetType == BearTargetType.Bee)
+        {
+            AttackBee();
+        }
+        else if (currentTargetType == BearTargetType.Hive)
+        {
+            AttackHive();
+        }
+    }
+private void AttackBee()
+{
+    if (beeTarget == null)
+    {
+        Debug.LogWarning("Bear tried to attack bee, but Bee Target is missing.");
+        return;
     }
 
-    private IEnumerator AttackHiveRoutine()
+    Debug.Log("Bear attacked bee.");
+
+    BeeHealth beeHealth = beeTarget.GetComponent<BeeHealth>();
+
+    if (beeHealth == null)
     {
-        isAttacking = true;
-
-        StopBear();
-        FaceHive();
-
-        PlayAnimation(attackStateName, 0.08f);
-
-        yield return new WaitForSeconds(attackDamageDelay);
-
-        HiveHealth hiveHealth = hiveAttackPoint.GetComponentInParent<HiveHealth>();
-
-        if (hiveHealth != null)
-            hiveHealth.TakeDamage(hiveDamageAmount);
-        else
-            Debug.LogWarning("BearEnemyAI: BearAttackPoint parentında HiveHealth yok.");
-
-        yield return new WaitForSeconds(0.8f);
-
-        isAttacking = false;
+        beeHealth = beeTarget.GetComponentInParent<BeeHealth>();
     }
 
-    private void StopBear()
+    if (beeHealth == null)
     {
-        if (rb != null)
-            rb.linearVelocity = Vector3.zero;
+        beeHealth = beeTarget.GetComponentInChildren<BeeHealth>();
     }
 
-    private void PlayAnimation(string stateName, float blendTime)
+    if (beeHealth != null)
     {
-        if (bearAnimator != null && !string.IsNullOrEmpty(stateName))
-            bearAnimator.CrossFade(stateName, blendTime);
+        beeHealth.TakeDamage(beeDamage);
+    }
+    else
+    {
+        Debug.LogWarning("Bear tried to attack bee, but BeeHealth was not found.");
+    }
+}
+    private void AttackHive()
+    {
+        if (hiveTarget == null)
+        {
+            return;
+        }
+
+        Debug.Log("Bear attacked hive.");
+
+        hiveTarget.SendMessage(
+            "TakeDamage",
+            hiveDamage,
+            SendMessageOptions.DontRequireReceiver
+        );
+    }
+
+    private void PlayRandomAttackAnimation()
+    {
+        if (bearAnimator == null)
+        {
+            return;
+        }
+
+        if (attackStateNames == null || attackStateNames.Length == 0)
+        {
+            return;
+        }
+
+        int randomIndex = Random.Range(0, attackStateNames.Length);
+
+        if (attackStateNames.Length > 1)
+        {
+            while (randomIndex == lastAttackIndex)
+            {
+                randomIndex = Random.Range(0, attackStateNames.Length);
+            }
+        }
+
+        lastAttackIndex = randomIndex;
+
+        string selectedAttackState = attackStateNames[randomIndex];
+
+        bearAnimator.CrossFadeInFixedTime(
+            selectedAttackState,
+            animationCrossFadeDuration
+        );
+
+        isMovingAnimationPlaying = false;
+
+        Debug.Log("Bear played attack animation: " + selectedAttackState);
+    }
+
+    private void PlayMoveAnimation()
+    {
+        if (bearAnimator == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(moveStateName))
+        {
+            return;
+        }
+
+        if (isMovingAnimationPlaying)
+        {
+            return;
+        }
+
+        bearAnimator.CrossFadeInFixedTime(
+            moveStateName,
+            animationCrossFadeDuration
+        );
+
+        isMovingAnimationPlaying = true;
+    }
+
+    private void PlayIdleAnimation()
+    {
+        if (bearAnimator == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(idleStateName))
+        {
+            return;
+        }
+
+        if (!isMovingAnimationPlaying)
+        {
+            return;
+        }
+
+        bearAnimator.CrossFadeInFixedTime(
+            idleStateName,
+            animationCrossFadeDuration
+        );
+
+        isMovingAnimationPlaying = false;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, beeDetectionRange);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }

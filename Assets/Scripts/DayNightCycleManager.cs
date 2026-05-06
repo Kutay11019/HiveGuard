@@ -18,6 +18,9 @@ public class DayNightCycleManager : MonoBehaviour
     [SerializeField] private GameObject enemyBear;
     [SerializeField] private Transform bearSpawnPoint;
 
+    [Header("Pollen Spawning")]
+    [SerializeField] private PollenSpawnManager3D pollenSpawnManager;
+
     [Header("Lighting Optional")]
     [SerializeField] private Light directionalLight;
     [SerializeField] private float dayLightIntensity = 1.2f;
@@ -43,6 +46,11 @@ public class DayNightCycleManager : MonoBehaviour
         if (dayObjectiveUI == null)
         {
             dayObjectiveUI = FindFirstObjectByType<DayObjectiveUI>();
+        }
+
+        if (pollenSpawnManager == null)
+        {
+            pollenSpawnManager = FindFirstObjectByType<PollenSpawnManager3D>();
         }
     }
 
@@ -84,6 +92,11 @@ public class DayNightCycleManager : MonoBehaviour
             enemyBear.SetActive(false);
         }
 
+        if (pollenSpawnManager != null)
+        {
+            pollenSpawnManager.StartSpawning();
+        }
+
         if (directionalLight != null)
         {
             directionalLight.intensity = dayLightIntensity;
@@ -105,6 +118,11 @@ public class DayNightCycleManager : MonoBehaviour
         currentPhase = GamePhase.Night;
         currentTimer = nightDuration;
         isTimerRunning = true;
+
+        if (pollenSpawnManager != null)
+        {
+            pollenSpawnManager.StopSpawning();
+        }
 
         if (enemyBear != null)
         {
@@ -137,6 +155,11 @@ public class DayNightCycleManager : MonoBehaviour
     {
         currentPhase = GamePhase.DemoComplete;
         isTimerRunning = false;
+
+        if (pollenSpawnManager != null)
+        {
+            pollenSpawnManager.StopSpawning();
+        }
 
         if (timerText != null)
         {

@@ -16,11 +16,14 @@ public class BearHealth : MonoBehaviour
     [SerializeField] private Animator bearAnimator;
     [SerializeField] private BearEnemyAI bearEnemyAI;
     [SerializeField] private Collider bearCollider;
+    [SerializeField] private HealthBarUI healthBarUI;
 
     private int currentHealth;
     private bool isDead = false;
 
     public bool IsDead => isDead;
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
 
     private void Awake()
     {
@@ -40,6 +43,16 @@ public class BearHealth : MonoBehaviour
         {
             bearCollider = GetComponent<Collider>();
         }
+
+        if (healthBarUI == null)
+        {
+            healthBarUI = GetComponentInChildren<HealthBarUI>(true);
+        }
+    }
+
+    private void Start()
+    {
+        UpdateHealthBar();
     }
 
     public void TakeDamage(int damageAmount)
@@ -58,6 +71,8 @@ public class BearHealth : MonoBehaviour
 
         Debug.Log("Bear took damage. Current health: " + currentHealth);
 
+        UpdateHealthBar();
+
         if (currentHealth <= 0)
         {
             Die();
@@ -65,6 +80,14 @@ public class BearHealth : MonoBehaviour
         else
         {
             PlayHitAnimation();
+        }
+    }
+
+    private void UpdateHealthBar()
+    {
+        if (healthBarUI != null)
+        {
+            healthBarUI.SetHealth(currentHealth, maxHealth);
         }
     }
 
@@ -90,6 +113,11 @@ public class BearHealth : MonoBehaviour
         if (bearCollider != null)
         {
             bearCollider.enabled = false;
+        }
+
+        if (healthBarUI != null)
+        {
+            healthBarUI.Hide();
         }
 
         if (bearAnimator != null && !string.IsNullOrEmpty(deathStateName))

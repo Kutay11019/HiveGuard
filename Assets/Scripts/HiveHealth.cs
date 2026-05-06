@@ -8,6 +8,7 @@ public class HiveHealth : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI hiveHealthText;
+    [SerializeField] private HealthBarUI healthBarUI;
 
     [Header("Result Manager")]
     [SerializeField] private PrototypeResultManager resultManager;
@@ -15,10 +16,21 @@ public class HiveHealth : MonoBehaviour
     private int currentHealth;
 
     public bool IsDestroyed => currentHealth <= 0;
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
+
+    private void Awake()
+    {
+        currentHealth = maxHealth;
+
+        if (healthBarUI == null)
+        {
+            healthBarUI = GetComponentInChildren<HealthBarUI>(true);
+        }
+    }
 
     private void Start()
     {
-        currentHealth = maxHealth;
         UpdateHealthUI();
     }
 
@@ -52,11 +64,21 @@ public class HiveHealth : MonoBehaviour
         {
             hiveHealthText.text = "Hive Health: " + currentHealth;
         }
+
+        if (healthBarUI != null)
+        {
+            healthBarUI.SetHealth(currentHealth, maxHealth);
+        }
     }
 
     private void HandleHiveDestroyed()
     {
         Debug.Log("Hive collapsed! Game Over.");
+
+        if (healthBarUI != null)
+        {
+            healthBarUI.Hide();
+        }
 
         if (resultManager != null)
         {
