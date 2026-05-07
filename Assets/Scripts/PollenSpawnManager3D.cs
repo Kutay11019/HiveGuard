@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PollenSpawnManager3D : MonoBehaviour
 {
-    [Header("Pollen Setup")]
-    [SerializeField] private GameObject pollenPrefab;
+    [Header("Flower / Pollen Prefabs")]
+    [SerializeField] private GameObject[] pollenPrefabs;
     [SerializeField] private Transform spawnedPollenParent;
 
     [Header("Spawn Point Setup")]
@@ -14,16 +14,20 @@ public class PollenSpawnManager3D : MonoBehaviour
 
     [Header("Wave Settings")]
     [SerializeField] private int pollenPerWave = 4;
-    [SerializeField] private float pollenLifetime = 10f;
-    [SerializeField] private float delayBetweenWaves = 1.5f;
-    [SerializeField] private float spawnYOffset = 0.5f;
+    [SerializeField] private float waveInterval = 4f;
+    [SerializeField] private float spawnYOffset = 0f;
     [SerializeField] private bool startSpawningAutomatically = false;
 
-    [Header("Debug")]
-    [SerializeField] private bool debugKeepPollenAlive = false;
+    [Header("Random Visual Settings")]
+    [SerializeField] private bool randomizeYRotation = true;
+
+    [Header("Debug Settings")]
+    [SerializeField] private bool logSpawnDetails = true;
+    [SerializeField] private bool warnIfSpawnOutsideCamera = true;
 
     private readonly List<GameObject> activePollenObjects = new List<GameObject>();
     private Coroutine spawnRoutine;
+    private int waveNumber = 0;
 
     private void Awake()
     {
@@ -52,6 +56,8 @@ public class PollenSpawnManager3D : MonoBehaviour
             StopCoroutine(spawnRoutine);
         }
 
+        waveNumber = 0;
+
         DespawnActivePollen();
 
         spawnRoutine = StartCoroutine(SpawnLoop());
@@ -72,18 +78,111 @@ public class PollenSpawnManager3D : MonoBehaviour
     {
         while (true)
         {
-            SpawnPollenWave();
+            SpawnPollenGroup();
 
-            if (debugKeepPollenAlive)
-            {
-                yield break;
-            }
-
-            yield return new WaitForSeconds(pollenLifetime);
+            yield return new WaitForSeconds(waveInterval);
 
             DespawnActivePollen();
+        }
+    }
 
-            yield return new WaitForSeconds(delayBetweenWaves);
+    private void SpawnPollenGroup()
+    {
+        List<GameObject> validPrefabs = GetValidPrefabs();
+        List<Transform> validSpawnPoints = GetValidSpawnPoints();
+
+        if (validPrefabs.Count == 0)
+        {
+            Debug.LogWarning("No valid flower / pollen prefabs assigned.");
+            return;
+        }
+
+        if (validSpawnPoints.Count == 0)
+        {
+            Debug.LogWarning("No valid pollen spawn points found.");
+            return;
+        }
+
+        waveNumber++;
+
+        int spawnCount = Mathf.Min(pollenPerWave, validSpawnPoints.Count);
+
+        ShuffleSpawnPoints(validSpawnPoints);
+
+        if (logSpawnDetails)
+        {
+            Debug.Log("----- Pollen Wave " + waveNumber + " started. Spawn Count: " + spawnCount + " -----");
+        }
+
+        for (int i = 0; i < spawnCount; i++)
+        {
+            Transform selectedSpawnPoint = validSpawnPoints[i];
+            GameObject selectedPrefab = validPrefabs[Random.Range(0, validPrefabs.Count)];
+
+            Vector3 spawnPosition = selectedSpawnPoint.position + Vector3.up * spawnYOffset;
+
+            Quaternion spawnRotation = selectedSpawnPoint.rotation;
+
+            if (randomizeYRotation)
+            {
+                spawnRotation = Quaternion.Euler(
+                    0f,
+                    Random.Range(0f, 360f),
+                    0f
+                );
+            }
+
+            GameObject spawnedPollen = Instantiate(
+                selectedPrefab,
+                spawnPosition,
+                spawnRotation,
+                spawnedPollenParent
+            );
+
+            spawnedPollen.name = selectedPrefab.name + "_Spawned_From_" + selectedSpawnPoint.name;
+
+            activePollenObjects.Add(spawnedPollen);
+
+            if (logSpawnDetails)
+            {
+                Debug.Log(
+                    "Wave " + waveNumber +
+                    " | Flower: " + selectedPrefab.name +
+                    " | Spawn Point: " + selectedSpawnPoint.name +
+                    " | Spawn Position: " + spawnPosition
+                );
+            }
+
+            if (warnIfSpawnOutsideCamera)
+            {
+                WarnIfOutsideCamera(selectedSpawnPoint, spawnPosition);
+            }
+        }
+
+        Debug.Log("Spawned pollen group. Count: " + spawnCount);
+    }
+
+    private void WarnIfOutsideCamera(Transform spawnPoint, Vector3 spawnPosition)
+    {
+        if (Camera.main == null)
+        {
+            return;
+        }
+
+        Vector3 viewportPosition = Camera.main.WorldToViewportPoint(spawnPosition);
+
+        bool isBehindCamera = viewportPosition.z < 0f;
+        bool isOutsideHorizontal = viewportPosition.x < 0f || viewportPosition.x > 1f;
+        bool isOutsideVertical = viewportPosition.y < 0f || viewportPosition.y > 1f;
+
+        if (isBehindCamera || isOutsideHorizontal || isOutsideVertical)
+        {
+            Debug.LogWarning(
+                "OUTSIDE CAMERA VIEW -> Spawn Point: " + spawnPoint.name +
+                " | World Position: " + spawnPosition +
+                " | Viewport Position: " + viewportPosition +
+                " | Check this spawn point position."
+            );
         }
     }
 
@@ -91,6 +190,7 @@ public class PollenSpawnManager3D : MonoBehaviour
     {
         if (spawnPointsParent == null)
         {
+            Debug.LogWarning("Spawn Points Parent is not assigned.");
             return;
         }
 
@@ -107,50 +207,38 @@ public class PollenSpawnManager3D : MonoBehaviour
         spawnPoints = foundSpawnPoints.ToArray();
 
         Debug.Log("Pollen spawn points found: " + spawnPoints.Length);
+
+        if (logSpawnDetails)
+        {
+            for (int i = 0; i < spawnPoints.Length; i++)
+            {
+                Debug.Log(
+                    "Spawn Point Registered -> Index: " + i +
+                    " | Name: " + spawnPoints[i].name +
+                    " | Position: " + spawnPoints[i].position
+                );
+            }
+        }
     }
 
-    private void SpawnPollenWave()
+    private List<GameObject> GetValidPrefabs()
     {
-        if (pollenPrefab == null)
+        List<GameObject> validPrefabs = new List<GameObject>();
+
+        if (pollenPrefabs == null)
         {
-            Debug.LogWarning("Pollen prefab is missing.");
-            return;
+            return validPrefabs;
         }
 
-        List<Transform> validSpawnPoints = GetValidSpawnPoints();
-
-        if (validSpawnPoints.Count == 0)
+        foreach (GameObject prefab in pollenPrefabs)
         {
-            Debug.LogWarning("No valid pollen spawn points found.");
-            return;
+            if (prefab != null)
+            {
+                validPrefabs.Add(prefab);
+            }
         }
 
-        int spawnCount = Mathf.Min(pollenPerWave, validSpawnPoints.Count);
-
-        ShuffleSpawnPoints(validSpawnPoints);
-
-        for (int i = 0; i < spawnCount; i++)
-        {
-            Transform selectedSpawnPoint = validSpawnPoints[i];
-
-            Vector3 spawnPosition = selectedSpawnPoint.position + Vector3.up * spawnYOffset;
-
-            GameObject spawnedPollen = Instantiate(
-                pollenPrefab,
-                spawnPosition,
-                selectedSpawnPoint.rotation,
-                spawnedPollenParent
-            );
-
-            spawnedPollen.name = "Spawned_Pollen_" + (i + 1);
-            spawnedPollen.SetActive(true);
-
-            activePollenObjects.Add(spawnedPollen);
-
-            Debug.Log("Pollen spawned: " + spawnedPollen.name + " at " + spawnPosition);
-        }
-
-        Debug.Log("Spawned pollen wave. Count: " + spawnCount);
+        return validPrefabs;
     }
 
     private List<Transform> GetValidSpawnPoints()

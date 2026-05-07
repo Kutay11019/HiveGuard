@@ -2,9 +2,28 @@ using UnityEngine;
 
 public class PollenCollectible3D : MonoBehaviour
 {
+    [Header("Collectible Settings")]
     [SerializeField] private int pollenValue = 1;
 
+    [Header("Destroy Target")]
+    [SerializeField] private GameObject objectToDestroyAfterCollect;
+
     private bool isCollected = false;
+
+    private void Awake()
+    {
+        if (objectToDestroyAfterCollect == null)
+        {
+            if (transform.parent != null)
+            {
+                objectToDestroyAfterCollect = transform.parent.gameObject;
+            }
+            else
+            {
+                objectToDestroyAfterCollect = gameObject;
+            }
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -33,7 +52,14 @@ public class PollenCollectible3D : MonoBehaviour
                 objectiveUI.ShowDeliverPollenObjective();
             }
 
-            Destroy(gameObject);
+            if (objectToDestroyAfterCollect != null)
+            {
+                Destroy(objectToDestroyAfterCollect);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }
