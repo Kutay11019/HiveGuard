@@ -5,8 +5,21 @@ public class BeeHealth : MonoBehaviour
     [Header("Health Settings")]
     [SerializeField] private int maxHealth = 5;
 
+    [Header("Death Settings")]
+    [SerializeField] private bool destroyOnDeath = true;
+    [SerializeField] private float destroyDelay = 1.5f;
+
+    [Header("Animation")]
+    [SerializeField] private Animator beeAnimator;
+    [SerializeField] private string damageTriggerName = "Damage";
+    [SerializeField] private string deathTriggerName = "Death";
+    [SerializeField] private string isDeadBoolName = "IsDead";
+
     [Header("UI")]
     [SerializeField] private HealthBarUI healthBarUI;
+
+    [Header("Components To Disable On Death")]
+    [SerializeField] private MonoBehaviour[] componentsToDisable;
 
     private int currentHealth;
     private bool isDead = false;
@@ -23,6 +36,11 @@ public class BeeHealth : MonoBehaviour
         {
             healthBarUI = GetComponentInChildren<HealthBarUI>(true);
         }
+
+        if (beeAnimator == null)
+        {
+            beeAnimator = GetComponentInChildren<Animator>();
+        }
     }
 
     private void Start()
@@ -38,12 +56,13 @@ public class BeeHealth : MonoBehaviour
             return;
         }
 
-        currentHealth -= damageAmount;
-
-        if (currentHealth < 0)
+        if (damageAmount <= 0)
         {
-            currentHealth = 0;
+            return;
         }
+
+        currentHealth -= damageAmount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         UpdateHealthBar();
 
@@ -52,6 +71,18 @@ public class BeeHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             Die();
+        }
+        else
+        {
+            PlayDamageAnimation();
+        }
+    }
+
+    private void PlayDamageAnimation()
+    {
+        if (beeAnimator != null && !string.IsNullOrEmpty(damageTriggerName))
+        {
+            beeAnimator.SetTrigger(damageTriggerName);
         }
     }
 
@@ -65,6 +96,11 @@ public class BeeHealth : MonoBehaviour
 
     private void Die()
     {
+        if (isDead)
+        {
+            return;
+        }
+
         isDead = true;
 
         Debug.Log("Bee died.");
@@ -74,7 +110,66 @@ public class BeeHealth : MonoBehaviour
             healthBarUI.Hide();
         }
 
-        // Şimdilik sadece debug bırakıyoruz.
-        // İstersen sonra buraya Game Over, respawn veya movement disable ekleriz.
+        PlayDeathAnimation();
+
+        DisableSelectedComponents();
+        DisableColliders();
+        StopRigidbodyMovement();
+
+        if (destroyOnDeath)
+        {
+            Destroy(gameObject, destroyDelay);
+        }
+    }
+
+    private void PlayDeathAnimation()
+    {
+        if (beeAnimator == null)
+        {
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(isDeadBoolName))
+        {
+            beeAnimator.SetBool(isDeadBoolName, true);
+        }
+
+        if (!string.IsNullOrEmpty(deathTriggerName))
+        {
+            beeAnimator.SetTrigger(deathTriggerName);
+        }
+    }
+
+    private void DisableSelectedComponents()
+    {
+        foreach (MonoBehaviour component in componentsToDisable)
+        {
+            if (component != null)
+            {
+                component.enabled = false;
+            }
+        }
+    }
+
+    private void DisableColliders()
+    {
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+
+        foreach (Collider col in colliders)
+        {
+            col.enabled = false;
+        }
+    }
+
+    private void StopRigidbodyMovement()
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
     }
 }

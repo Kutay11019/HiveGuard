@@ -14,11 +14,15 @@ public class DayNightCycleManager : MonoBehaviour
     [SerializeField] private float dayDuration = 25f;
     [SerializeField] private float nightDuration = 20f;
 
-    [Header("Enemy Setup")]
+    [Header("Bear Setup")]
     [SerializeField] private GameObject enemyBear;
     [SerializeField] private Transform bearSpawnPoint;
 
-    [Header("Wasp Setup")]
+    [Header("Single Wasp Setup Optional")]
+    [SerializeField] private GameObject enemyWasp;
+    [SerializeField] private Transform waspSpawnPoint;
+
+    [Header("Wasp Spawn Manager Optional")]
     [SerializeField] private WaspSpawnManager waspSpawnManager;
 
     [Header("Pollen Spawning")]
@@ -95,15 +99,7 @@ public class DayNightCycleManager : MonoBehaviour
         currentTimer = dayDuration;
         isTimerRunning = true;
 
-        if (enemyBear != null)
-        {
-            enemyBear.SetActive(false);
-        }
-
-        if (waspSpawnManager != null)
-        {
-            waspSpawnManager.StopNightSpawning();
-        }
+        DisableNightEnemies();
 
         if (pollenSpawnManager != null)
         {
@@ -137,21 +133,7 @@ public class DayNightCycleManager : MonoBehaviour
             pollenSpawnManager.StopSpawning();
         }
 
-        if (enemyBear != null)
-        {
-            if (bearSpawnPoint != null)
-            {
-                enemyBear.transform.position = bearSpawnPoint.position;
-                enemyBear.transform.rotation = bearSpawnPoint.rotation;
-            }
-
-            enemyBear.SetActive(true);
-        }
-
-        if (waspSpawnManager != null)
-        {
-            waspSpawnManager.StartNightSpawning();
-        }
+        ActivateNightEnemies();
 
         if (directionalLight != null)
         {
@@ -179,10 +161,7 @@ public class DayNightCycleManager : MonoBehaviour
             pollenSpawnManager.StopSpawning();
         }
 
-        if (waspSpawnManager != null)
-        {
-            waspSpawnManager.StopNightSpawning();
-        }
+        DisableNightEnemies();
 
         if (timerText != null)
         {
@@ -202,6 +181,51 @@ public class DayNightCycleManager : MonoBehaviour
         {
             Debug.Log("Demo complete. Night survived.");
         }
+    }
+
+    private void DisableNightEnemies()
+    {
+        if (enemyBear != null)
+        {
+            enemyBear.SetActive(false);
+        }
+
+        if (enemyWasp != null)
+        {
+            enemyWasp.SetActive(false);
+        }
+
+        if (waspSpawnManager != null)
+        {
+            waspSpawnManager.StopNightSpawning();
+        }
+    }
+
+    private void ActivateNightEnemies()
+    {
+        ActivateEnemy(enemyBear, bearSpawnPoint);
+        ActivateEnemy(enemyWasp, waspSpawnPoint);
+
+        if (waspSpawnManager != null)
+        {
+            waspSpawnManager.StartNightSpawning();
+        }
+    }
+
+    private void ActivateEnemy(GameObject enemy, Transform spawnPoint)
+    {
+        if (enemy == null)
+        {
+            return;
+        }
+
+        if (spawnPoint != null)
+        {
+            enemy.transform.position = spawnPoint.position;
+            enemy.transform.rotation = spawnPoint.rotation;
+        }
+
+        enemy.SetActive(true);
     }
 
     private void HandlePhaseTimerFinished()

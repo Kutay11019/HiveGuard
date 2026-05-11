@@ -2,19 +2,8 @@ using UnityEngine;
 
 public class BearEnemyAI : MonoBehaviour
 {
-    private enum BearTargetType
-    {
-        None,
-        Bee,
-        Hive
-    }
-
-    [Header("Targets")]
-    [SerializeField] private Transform beeTarget;
+    [Header("Target")]
     [SerializeField] private Transform hiveTarget;
-
-    [Header("Target Selection")]
-    [SerializeField] private float beeDetectionRange = 4f;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 2f;
@@ -23,7 +12,6 @@ public class BearEnemyAI : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private float attackRange = 1.5f;
     [SerializeField] private float attackCooldown = 1f;
-    [SerializeField] private int beeDamage = 20;
     [SerializeField] private int hiveDamage = 40;
 
     [Header("Animation")]
@@ -44,9 +32,6 @@ public class BearEnemyAI : MonoBehaviour
 
     [SerializeField] private float animationCrossFadeDuration = 0.08f;
 
-    private Transform currentTarget;
-    private BearTargetType currentTargetType = BearTargetType.None;
-
     private float lastAttackTime = -999f;
     private int lastAttackIndex = -1;
     private bool isMovingAnimationPlaying = false;
@@ -59,59 +44,49 @@ public class BearEnemyAI : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (hiveTarget == null)
+        {
+            GameObject hiveObject = GameObject.FindGameObjectWithTag("Hive");
+
+            if (hiveObject != null)
+            {
+                hiveTarget = hiveObject.transform;
+            }
+            else
+            {
+                Debug.LogWarning("BearEnemyAI could not find Hive. Assign Hive Target manually or set Hive object tag to Hive.");
+            }
+        }
+    }
+
     private void Update()
     {
-        SelectTarget();
-
-        if (currentTarget == null)
+        if (hiveTarget == null)
         {
             PlayIdleAnimation();
             return;
         }
 
-        MoveOrAttackCurrentTarget();
+        MoveOrAttackHive();
     }
 
-    private void SelectTarget()
+    private void MoveOrAttackHive()
     {
-        if (beeTarget != null)
+        float distanceToHive = Vector3.Distance(transform.position, hiveTarget.position);
+
+        FaceTarget(hiveTarget);
+
+        if (distanceToHive > attackRange)
         {
-            float distanceToBee = Vector3.Distance(transform.position, beeTarget.position);
-
-            if (distanceToBee <= beeDetectionRange)
-            {
-                currentTarget = beeTarget;
-                currentTargetType = BearTargetType.Bee;
-                return;
-            }
-        }
-
-        if (hiveTarget != null)
-        {
-            currentTarget = hiveTarget;
-            currentTargetType = BearTargetType.Hive;
-            return;
-        }
-
-        currentTarget = null;
-        currentTargetType = BearTargetType.None;
-    }
-
-    private void MoveOrAttackCurrentTarget()
-    {
-        float distanceToTarget = Vector3.Distance(transform.position, currentTarget.position);
-
-        FaceTarget(currentTarget);
-
-        if (distanceToTarget > attackRange)
-        {
-            MoveTowardsTarget(currentTarget);
+            MoveTowardsTarget(hiveTarget);
             PlayMoveAnimation();
         }
         else
         {
             PlayIdleAnimation();
-            TryAttack();
+            TryAttackHive();
         }
     }
 
@@ -149,7 +124,7 @@ public class BearEnemyAI : MonoBehaviour
         );
     }
 
-    private void TryAttack()
+    private void TryAttackHive()
     {
         if (Time.time < lastAttackTime + attackCooldown)
         {
@@ -159,47 +134,9 @@ public class BearEnemyAI : MonoBehaviour
         lastAttackTime = Time.time;
 
         PlayRandomAttackAnimation();
-
-        if (currentTargetType == BearTargetType.Bee)
-        {
-            AttackBee();
-        }
-        else if (currentTargetType == BearTargetType.Hive)
-        {
-            AttackHive();
-        }
-    }
-private void AttackBee()
-{
-    if (beeTarget == null)
-    {
-        Debug.LogWarning("Bear tried to attack bee, but Bee Target is missing.");
-        return;
+        AttackHive();
     }
 
-    Debug.Log("Bear attacked bee.");
-
-    BeeHealth beeHealth = beeTarget.GetComponent<BeeHealth>();
-
-    if (beeHealth == null)
-    {
-        beeHealth = beeTarget.GetComponentInParent<BeeHealth>();
-    }
-
-    if (beeHealth == null)
-    {
-        beeHealth = beeTarget.GetComponentInChildren<BeeHealth>();
-    }
-
-    if (beeHealth != null)
-    {
-        beeHealth.TakeDamage(beeDamage);
-    }
-    else
-    {
-        Debug.LogWarning("Bear tried to attack bee, but BeeHealth was not found.");
-    }
-}
     private void AttackHive()
     {
         if (hiveTarget == null)
@@ -209,11 +146,26 @@ private void AttackBee()
 
         Debug.Log("Bear attacked hive.");
 
-        hiveTarget.SendMessage(
-            "TakeDamage",
-            hiveDamage,
-            SendMessageOptions.DontRequireReceiver
-        );
+        HiveHealth hiveHealth = hiveTarget.GetComponent<HiveHealth>();
+
+        if (hiveHealth == null)
+        {
+            hiveHealth = hiveTarget.GetComponentInParent<HiveHealth>();
+        }
+
+        if (hiveHealth == null)
+        {
+            hiveHealth = hiveTarget.GetComponentInChildren<HiveHealth>();
+        }
+
+        if (hiveHealth != null)
+        {
+            hiveHealth.TakeDamage(hiveDamage);
+        }
+        else
+        {
+            Debug.LogWarning("Bear tried to attack hive, but HiveHealth was not found.");
+        }
     }
 
     private void PlayRandomAttackAnimation()
@@ -304,9 +256,6 @@ private void AttackBee()
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, beeDetectionRange);
-
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 public class BeeAttack3D : MonoBehaviour
 {
@@ -8,7 +9,9 @@ public class BeeAttack3D : MonoBehaviour
     [SerializeField] private float attackRange = 1.8f;
     [SerializeField] private int attackDamage = 1;
     [SerializeField] private float attackCooldown = 0.6f;
-    [SerializeField] private LayerMask bearLayer;
+
+    [FormerlySerializedAs("bearLayer")]
+    [SerializeField] private LayerMask enemyLayer;
 
     [Header("Input Settings")]
     [SerializeField] private bool useLeftMouse = true;
@@ -53,6 +56,12 @@ public class BeeAttack3D : MonoBehaviour
         return mousePressed || fPressed;
     }
 
+    // UI Button OnClick için bunu kullanabilirsin.
+    public void Attack()
+    {
+        TryAttack();
+    }
+
     private void TryAttack()
     {
         if (Time.time < lastAttackTime + attackCooldown)
@@ -67,49 +76,72 @@ public class BeeAttack3D : MonoBehaviour
             beeAnimatorDriver.PlayAttackAnimation();
         }
 
-        DealDamageToBearsInRange();
+        DealDamageToEnemiesInRange();
     }
 
-    private void DealDamageToBearsInRange()
+    private void DealDamageToEnemiesInRange()
     {
         Collider[] hitColliders = Physics.OverlapSphere(
             transform.position,
             attackRange,
-            bearLayer
+            enemyLayer,
+            QueryTriggerInteraction.Collide
         );
 
         HashSet<BearHealth> damagedBears = new HashSet<BearHealth>();
+        HashSet<WaspHealth> damagedWasps = new HashSet<WaspHealth>();
 
         foreach (Collider hitCollider in hitColliders)
         {
             BearHealth bearHealth = hitCollider.GetComponentInParent<BearHealth>();
 
-            if (bearHealth == null)
+            if (bearHealth != null)
             {
+                if (bearHealth.IsDead)
+                {
+                    continue;
+                }
+
+                if (damagedBears.Contains(bearHealth))
+                {
+                    continue;
+                }
+
+                damagedBears.Add(bearHealth);
+                bearHealth.TakeDamage(attackDamage);
+
+                Debug.Log("Bee attacked bear: " + bearHealth.gameObject.name);
                 continue;
             }
 
-            if (bearHealth.IsDead)
+            WaspHealth waspHealth = hitCollider.GetComponentInParent<WaspHealth>();
+
+            if (waspHealth != null)
             {
+                if (damagedWasps.Contains(waspHealth))
+                {
+                    continue;
+                }
+
+                damagedWasps.Add(waspHealth);
+                waspHealth.TakeDamage(attackDamage);
+
+                Debug.Log("Bee attacked wasp: " + waspHealth.gameObject.name);
                 continue;
             }
 
-            if (damagedBears.Contains(bearHealth))
-            {
-                continue;
-            }
-
-            damagedBears.Add(bearHealth);
-            bearHealth.TakeDamage(attackDamage);
+            Debug.LogWarning("Object was in enemy layer, but has no BearHealth or WaspHealth: " + hitCollider.name);
         }
 
-        if (damagedBears.Count == 0)
+        int totalDamagedEnemies = damagedBears.Count + damagedWasps.Count;
+
+        if (totalDamagedEnemies == 0)
         {
-            Debug.Log("Bee attacked, but no bear was in range.");
+            Debug.Log("Bee attacked, but no enemy was in range.");
         }
         else
         {
-            Debug.Log("Bee attacked bear count: " + damagedBears.Count);
+            Debug.Log("Bee attacked enemy count: " + totalDamagedEnemies);
         }
     }
 
