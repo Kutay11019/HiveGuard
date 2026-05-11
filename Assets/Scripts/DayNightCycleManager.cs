@@ -18,6 +18,9 @@ public class DayNightCycleManager : MonoBehaviour
     [SerializeField] private GameObject enemyBear;
     [SerializeField] private Transform bearSpawnPoint;
 
+    [Header("Wasp Setup")]
+    [SerializeField] private WaspSpawnManager waspSpawnManager;
+
     [Header("Pollen Spawning")]
     [SerializeField] private PollenSpawnManager3D pollenSpawnManager;
 
@@ -51,6 +54,11 @@ public class DayNightCycleManager : MonoBehaviour
         if (pollenSpawnManager == null)
         {
             pollenSpawnManager = FindFirstObjectByType<PollenSpawnManager3D>();
+        }
+
+        if (waspSpawnManager == null)
+        {
+            waspSpawnManager = FindFirstObjectByType<WaspSpawnManager>();
         }
     }
 
@@ -90,6 +98,11 @@ public class DayNightCycleManager : MonoBehaviour
         if (enemyBear != null)
         {
             enemyBear.SetActive(false);
+        }
+
+        if (waspSpawnManager != null)
+        {
+            waspSpawnManager.StopNightSpawning();
         }
 
         if (pollenSpawnManager != null)
@@ -135,12 +148,17 @@ public class DayNightCycleManager : MonoBehaviour
             enemyBear.SetActive(true);
         }
 
+        if (waspSpawnManager != null)
+        {
+            waspSpawnManager.StartNightSpawning();
+        }
+
         if (directionalLight != null)
         {
             directionalLight.intensity = nightLightIntensity;
         }
 
-        UpdatePhaseUI("NIGHT", "Defend the hive from bears!");
+        UpdatePhaseUI("NIGHT", "Defend the hive from bears and wasps!");
         UpdateTimerUI();
 
         if (dayObjectiveUI != null)
@@ -159,6 +177,11 @@ public class DayNightCycleManager : MonoBehaviour
         if (pollenSpawnManager != null)
         {
             pollenSpawnManager.StopSpawning();
+        }
+
+        if (waspSpawnManager != null)
+        {
+            waspSpawnManager.StopNightSpawning();
         }
 
         if (timerText != null)

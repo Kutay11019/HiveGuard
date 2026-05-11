@@ -8,10 +8,29 @@ public class PlayerAttack : MonoBehaviour
 
     public void Attack()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, attackRange, bearLayer);
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position,
+            attackRange,
+            bearLayer,
+            QueryTriggerInteraction.Collide
+        );
 
         foreach (Collider hit in hits)
         {
+            WaspHealth waspHealth = hit.GetComponent<WaspHealth>();
+
+            if (waspHealth == null)
+            {
+                waspHealth = hit.GetComponentInParent<WaspHealth>();
+            }
+
+            if (waspHealth != null)
+            {
+                waspHealth.TakeDamage(attackDamage);
+                Debug.Log("Player attacked wasp.");
+                break;
+            }
+
             BearHealth bearHealth = hit.GetComponent<BearHealth>();
 
             if (bearHealth == null)
@@ -22,6 +41,7 @@ public class PlayerAttack : MonoBehaviour
             if (bearHealth != null)
             {
                 bearHealth.TakeDamage(attackDamage);
+                Debug.Log("Player attacked bear.");
                 break;
             }
         }

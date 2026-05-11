@@ -1,2 +1,21 @@
 fileFormatVersion: 2
 guid: b79ccae8f2a5b0448aa62fc630a72d61
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - enemyBear: {instanceID: 0}
+  - bearSpawnPoint: {instanceID: 0}
+  - waspSpawnManager: {instanceID: 0}
+  - pollenSpawnManager: {instanceID: 0}
+  - directionalLight: {instanceID: 0}
+  - phaseText: {instanceID: 0}
+  - timerText: {instanceID: 0}
+  - statusText: {instanceID: 0}
+  - dayObjectiveUI: {instanceID: 0}
+  - resultManager: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

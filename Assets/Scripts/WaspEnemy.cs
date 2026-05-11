@@ -6,11 +6,12 @@ public class WaspEnemy : MonoBehaviour
     [SerializeField] private Transform hiveTarget;
 
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 6f;
-    [SerializeField] private float attackDistance = 1.5f;
+    [SerializeField] private float moveSpeed = 7f;
+    [SerializeField] private float attackDistance = 1.4f;
+    [SerializeField] private float rotationSpeed = 10f;
 
     [Header("Combat")]
-    [SerializeField] private int maxHealth = 2;
+    [SerializeField] private int maxHealth = 1;
     [SerializeField] private int damageToHive = 5;
     [SerializeField] private float attackCooldown = 1f;
 
@@ -24,29 +25,57 @@ public class WaspEnemy : MonoBehaviour
     private float attackTimer;
     private bool isDead;
 
-    private void Start()
+    private Rigidbody rb;
+    private Collider waspCollider;
+
+    private void Awake()
     {
         currentHealth = maxHealth;
 
+        rb = GetComponent<Rigidbody>();
+        waspCollider = GetComponent<Collider>();
+
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+        }
+
+        if (rb != null)
+        {
+            rb.useGravity = false;
+            rb.isKinematic = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+    }
+
+    private void Start()
+    {
         if (hiveTarget == null)
         {
             GameObject hive = GameObject.FindGameObjectWithTag("Hive");
-            if (hive != null)
-                hiveTarget = hive.transform;
-        }
 
-        if (animator == null)
-            animator = GetComponent<Animator>();
+            if (hive != null)
+            {
+                hiveTarget = hive.transform;
+            }
+            else
+            {
+                Debug.LogError("WaspEnemy could not find Hive. Make sure Hive object has the Hive tag.");
+            }
+        }
     }
 
     private void Update()
     {
         if (isDead || hiveTarget == null)
+        {
             return;
+        }
 
-        float distance = Vector3.Distance(transform.position, hiveTarget.position);
+        float distanceToHive = Vector3.Distance(transform.position, hiveTarget.position);
 
-        if (distance > attackDistance)
+        if (distanceToHive > attackDistance)
         {
             MoveToHive();
         }
@@ -59,7 +88,9 @@ public class WaspEnemy : MonoBehaviour
     private void MoveToHive()
     {
         if (animator != null)
+        {
             animator.SetBool(isMovingBoolName, true);
+        }
 
         Vector3 direction = (hiveTarget.position - transform.position).normalized;
         transform.position += direction * moveSpeed * Time.deltaTime;
@@ -67,26 +98,38 @@ public class WaspEnemy : MonoBehaviour
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 8f * Time.deltaTime);
+
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
         }
     }
 
     private void AttackHive()
     {
         if (animator != null)
+        {
             animator.SetBool(isMovingBoolName, false);
+        }
 
         attackTimer -= Time.deltaTime;
 
         if (attackTimer <= 0f)
         {
             if (animator != null)
+            {
                 animator.SetTrigger(attackTriggerName);
+            }
 
             HiveHealth hiveHealth = hiveTarget.GetComponent<HiveHealth>();
 
             if (hiveHealth != null)
+            {
                 hiveHealth.TakeDamage(damageToHive);
+                Debug.Log("Wasp attacked hive. Damage: " + damageToHive);
+            }
 
             attackTimer = attackCooldown;
         }
@@ -95,9 +138,13 @@ public class WaspEnemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         if (isDead)
+        {
             return;
+        }
 
         currentHealth -= damage;
+
+        Debug.Log("Wasp took damage. Current health: " + currentHealth);
 
         if (currentHealth <= 0)
         {
@@ -115,10 +162,20 @@ public class WaspEnemy : MonoBehaviour
             animator.SetTrigger(deathTriggerName);
         }
 
-        Collider col = GetComponent<Collider>();
-        if (col != null)
-            col.enabled = false;
+        if (waspCollider != null)
+        {
+            waspCollider.enabled = false;
+        }
 
-        Destroy(gameObject, 2f);
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+
+        Debug.Log("Wasp died.");
+
+        Destroy(gameObject, 1.5f);
     }
 }
