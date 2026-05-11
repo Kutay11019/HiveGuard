@@ -3,7 +3,7 @@ using UnityEngine;
 public class WaspHealth : MonoBehaviour
 {
     [Header("Health")]
-    [SerializeField] private int maxHealth = 1;
+    [SerializeField] private int maxHealth = 3;
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -12,8 +12,13 @@ public class WaspHealth : MonoBehaviour
     [Header("Death")]
     [SerializeField] private float destroyDelay = 1.5f;
 
+    [Header("References")]
+    [SerializeField] private HealthBarUI healthBarUI;
+
     private int currentHealth;
     private bool isDead;
+
+    public bool IsDead => isDead;
 
     private void Awake()
     {
@@ -23,6 +28,13 @@ public class WaspHealth : MonoBehaviour
         {
             animator = GetComponentInChildren<Animator>();
         }
+
+        if (healthBarUI == null)
+        {
+            healthBarUI = GetComponentInChildren<HealthBarUI>(true);
+        }
+
+        UpdateHealthBar();
     }
 
     public void TakeDamage(int damage)
@@ -33,8 +45,11 @@ public class WaspHealth : MonoBehaviour
         }
 
         currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         Debug.Log("Wasp took damage. Current health: " + currentHealth);
+
+        UpdateHealthBar();
 
         if (currentHealth <= 0)
         {
@@ -42,8 +57,23 @@ public class WaspHealth : MonoBehaviour
         }
     }
 
+    private void UpdateHealthBar()
+    {
+        if (healthBarUI == null)
+        {
+            return;
+        }
+
+        healthBarUI.SetHealth(currentHealth, maxHealth);
+    }
+
     private void Die()
     {
+        if (isDead)
+        {
+            return;
+        }
+
         isDead = true;
 
         WaspEnemy waspEnemy = GetComponent<WaspEnemy>();
@@ -68,6 +98,8 @@ public class WaspHealth : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
             rb.isKinematic = true;
         }
+
+        UpdateHealthBar();
 
         if (animator != null)
         {
