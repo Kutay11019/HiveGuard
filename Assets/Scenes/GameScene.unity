@@ -1672,15 +1672,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19404cdca1892ca4a8c260c6a5f915e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BearEnemyAI
-  beeTarget: {fileID: 1071729628}
   hiveTarget: {fileID: 862658974}
-  beeDetectionRange: 4
   moveSpeed: 2.2
   rotationSpeed: 8
   attackRange: 1.5
   attackCooldown: 1.5
-  beeDamage: 1
-  hiveDamage: 1
+  hiveDamage: 10
   bearAnimator: {fileID: 253265478}
   idleStateName: Combat Idle
   moveStateName: RunForward
