@@ -742,7 +742,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BeeHealth
   maxHealth: 5
   destroyOnDeath: 1
-  destroyDelay: 0.5
+  destroyDelay: 1.5
+  beeAnimator: {fileID: 1130667581}
+  damageTriggerName: Damage
+  deathTriggerName: Death
+  isDeadBoolName: IsDead
   healthBarUI: {fileID: 1706179583}
   componentsToDisable:
   - {fileID: 240237332}
@@ -1363,6 +1367,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 373586754}
   m_CullTransparentMesh: 1
+--- !u!1 &414760477
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 414760478}
+  m_Layer: 0
+  m_Name: WaspSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &414760478
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 414760477}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.35, y: 0, z: 1.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 464078969}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &458504049
 GameObject:
   m_ObjectHideFlags: 0
@@ -1506,6 +1541,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1054681384}
+  - {fileID: 414760478}
   m_Father: {fileID: 535771501}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &535771500
@@ -2802,6 +2838,8 @@ MonoBehaviour:
   nightDuration: 15
   enemyBear: {fileID: 826910272}
   bearSpawnPoint: {fileID: 1054681384}
+  enemyWasp: {fileID: 4792227409831606120}
+  waspSpawnPoint: {fileID: 414760478}
   waspSpawnManager: {fileID: 0}
   pollenSpawnManager: {fileID: 0}
   directionalLight: {fileID: 1405325623}
@@ -5052,6 +5090,11 @@ PrefabInstance:
       addedObject: {fileID: 1759286668}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9eaba3d68f6536e49a5e6f9441b00a30, type: 3}
+--- !u!1 &4792227409831606120 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7650468043490905332, guid: 9eaba3d68f6536e49a5e6f9441b00a30, type: 3}
+  m_PrefabInstance: {fileID: 4792227409831606119}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

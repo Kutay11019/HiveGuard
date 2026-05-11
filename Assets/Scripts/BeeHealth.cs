@@ -7,7 +7,13 @@ public class BeeHealth : MonoBehaviour
 
     [Header("Death Settings")]
     [SerializeField] private bool destroyOnDeath = true;
-    [SerializeField] private float destroyDelay = 0.5f;
+    [SerializeField] private float destroyDelay = 1.5f;
+
+    [Header("Animation")]
+    [SerializeField] private Animator beeAnimator;
+    [SerializeField] private string damageTriggerName = "Damage";
+    [SerializeField] private string deathTriggerName = "Death";
+    [SerializeField] private string isDeadBoolName = "IsDead";
 
     [Header("UI")]
     [SerializeField] private HealthBarUI healthBarUI;
@@ -29,6 +35,11 @@ public class BeeHealth : MonoBehaviour
         if (healthBarUI == null)
         {
             healthBarUI = GetComponentInChildren<HealthBarUI>(true);
+        }
+
+        if (beeAnimator == null)
+        {
+            beeAnimator = GetComponentInChildren<Animator>();
         }
     }
 
@@ -61,6 +72,18 @@ public class BeeHealth : MonoBehaviour
         {
             Die();
         }
+        else
+        {
+            PlayDamageAnimation();
+        }
+    }
+
+    private void PlayDamageAnimation()
+    {
+        if (beeAnimator != null && !string.IsNullOrEmpty(damageTriggerName))
+        {
+            beeAnimator.SetTrigger(damageTriggerName);
+        }
     }
 
     private void UpdateHealthBar()
@@ -87,6 +110,8 @@ public class BeeHealth : MonoBehaviour
             healthBarUI.Hide();
         }
 
+        PlayDeathAnimation();
+
         DisableSelectedComponents();
         DisableColliders();
         StopRigidbodyMovement();
@@ -94,6 +119,24 @@ public class BeeHealth : MonoBehaviour
         if (destroyOnDeath)
         {
             Destroy(gameObject, destroyDelay);
+        }
+    }
+
+    private void PlayDeathAnimation()
+    {
+        if (beeAnimator == null)
+        {
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(isDeadBoolName))
+        {
+            beeAnimator.SetBool(isDeadBoolName, true);
+        }
+
+        if (!string.IsNullOrEmpty(deathTriggerName))
+        {
+            beeAnimator.SetTrigger(deathTriggerName);
         }
     }
 
