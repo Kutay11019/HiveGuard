@@ -7,23 +7,19 @@ public class DayNightCycleManager : MonoBehaviour
     {
         Day,
         Night,
-        DemoComplete
+        GameComplete
     }
 
     [Header("Phase Durations")]
     [SerializeField] private float dayDuration = 25f;
     [SerializeField] private float nightDuration = 20f;
 
-    [Header("Bear Setup")]
-    [SerializeField] private GameObject enemyBear;
-    [SerializeField] private Transform bearSpawnPoint;
+    [Header("Level Progression")]
+    [SerializeField] private int totalDays = 5;
+    [SerializeField] private int currentDay = 1;
 
-    [Header("Single Wasp Setup Optional")]
-    [SerializeField] private GameObject enemyWasp;
-    [SerializeField] private Transform waspSpawnPoint;
-
-    [Header("Wasp Spawn Manager Optional")]
-    [SerializeField] private WaspSpawnManager waspSpawnManager;
+    [Header("Night Enemy Waves")]
+    [SerializeField] private NightEnemyWaveSpawner nightEnemyWaveSpawner;
 
     [Header("Pollen Spawning")]
     [SerializeField] private PollenSpawnManager3D pollenSpawnManager;
@@ -60,14 +56,15 @@ public class DayNightCycleManager : MonoBehaviour
             pollenSpawnManager = FindFirstObjectByType<PollenSpawnManager3D>();
         }
 
-        if (waspSpawnManager == null)
+        if (nightEnemyWaveSpawner == null)
         {
-            waspSpawnManager = FindFirstObjectByType<WaspSpawnManager>();
+            nightEnemyWaveSpawner = FindFirstObjectByType<NightEnemyWaveSpawner>();
         }
     }
 
     private void Start()
     {
+        currentDay = Mathf.Clamp(currentDay, 1, totalDays);
         StartDayPhase();
     }
 
@@ -99,7 +96,7 @@ public class DayNightCycleManager : MonoBehaviour
         currentTimer = dayDuration;
         isTimerRunning = true;
 
-        DisableNightEnemies();
+        ClearNightEnemies();
 
         if (pollenSpawnManager != null)
         {
@@ -111,7 +108,11 @@ public class DayNightCycleManager : MonoBehaviour
             directionalLight.intensity = dayLightIntensity;
         }
 
-        UpdatePhaseUI("DAY", "Collect pollen and deliver it to the hive!");
+        UpdatePhaseUI(
+            "DAY " + currentDay,
+            "Collect pollen and deliver it to the hive!"
+        );
+
         UpdateTimerUI();
 
         if (dayObjectiveUI != null)
@@ -119,7 +120,7 @@ public class DayNightCycleManager : MonoBehaviour
             dayObjectiveUI.ShowDayObjective();
         }
 
-        Debug.Log("Day phase started.");
+        Debug.Log("Day " + currentDay + " started.");
     }
 
     private void StartNightPhase()
@@ -133,14 +134,18 @@ public class DayNightCycleManager : MonoBehaviour
             pollenSpawnManager.StopSpawning();
         }
 
-        ActivateNightEnemies();
+        SpawnNightWave();
 
         if (directionalLight != null)
         {
             directionalLight.intensity = nightLightIntensity;
         }
 
-        UpdatePhaseUI("NIGHT", "Defend the hive from bears and wasps!");
+        UpdatePhaseUI(
+            "NIGHT " + currentDay,
+            "Defend the hive from bears and wasps!"
+        );
+
         UpdateTimerUI();
 
         if (dayObjectiveUI != null)
@@ -148,24 +153,79 @@ public class DayNightCycleManager : MonoBehaviour
             dayObjectiveUI.ShowNightObjective();
         }
 
-        Debug.Log("Night phase started.");
+        Debug.Log("Night " + currentDay + " started.");
     }
 
-    private void CompleteDemoPhase()
+    private void SpawnNightWave()
     {
-        currentPhase = GamePhase.DemoComplete;
+        if (nightEnemyWaveSpawner == null)
+        {
+            Debug.LogWarning("NightEnemyWaveSpawner is not assigned.");
+            return;
+        }
+
+        nightEnemyWaveSpawner.SpawnWaveForDay(currentDay);
+    }
+
+    private void ClearNightEnemies()
+    {
+        if (nightEnemyWaveSpawner != null)
+        {
+            nightEnemyWaveSpawner.ClearSpawnedEnemies();
+        }
+    }
+
+    private void HandlePhaseTimerFinished()
+    {
+        if (currentPhase == GamePhase.Day)
+        {
+            StartNightPhase();
+        }
+        else if (currentPhase == GamePhase.Night)
+        {
+            FinishNightPhase();
+        }
+    }
+
+    private void FinishNightPhase()
+    {
+        ClearNightEnemies();
+
+        if (currentDay >= totalDays)
+        {
+            CompleteGame();
+            return;
+        }
+
+        currentDay++;
+        StartDayPhase();
+    }
+
+    private void CompleteGame()
+    {
+        currentPhase = GamePhase.GameComplete;
         isTimerRunning = false;
+
+        ClearNightEnemies();
 
         if (pollenSpawnManager != null)
         {
             pollenSpawnManager.StopSpawning();
         }
 
-        DisableNightEnemies();
-
         if (timerText != null)
         {
             timerText.text = "Time: 0";
+        }
+
+        if (phaseText != null)
+        {
+            phaseText.text = "VICTORY";
+        }
+
+        if (statusText != null)
+        {
+            statusText.text = "You survived all nights and protected the hive!";
         }
 
         if (dayObjectiveUI != null)
@@ -177,67 +237,8 @@ public class DayNightCycleManager : MonoBehaviour
         {
             resultManager.ShowNightSurvived();
         }
-        else
-        {
-            Debug.Log("Demo complete. Night survived.");
-        }
-    }
 
-    private void DisableNightEnemies()
-    {
-        if (enemyBear != null)
-        {
-            enemyBear.SetActive(false);
-        }
-
-        if (enemyWasp != null)
-        {
-            enemyWasp.SetActive(false);
-        }
-
-        if (waspSpawnManager != null)
-        {
-            waspSpawnManager.StopNightSpawning();
-        }
-    }
-
-    private void ActivateNightEnemies()
-    {
-        ActivateEnemy(enemyBear, bearSpawnPoint);
-        ActivateEnemy(enemyWasp, waspSpawnPoint);
-
-        if (waspSpawnManager != null)
-        {
-            waspSpawnManager.StartNightSpawning();
-        }
-    }
-
-    private void ActivateEnemy(GameObject enemy, Transform spawnPoint)
-    {
-        if (enemy == null)
-        {
-            return;
-        }
-
-        if (spawnPoint != null)
-        {
-            enemy.transform.position = spawnPoint.position;
-            enemy.transform.rotation = spawnPoint.rotation;
-        }
-
-        enemy.SetActive(true);
-    }
-
-    private void HandlePhaseTimerFinished()
-    {
-        if (currentPhase == GamePhase.Day)
-        {
-            StartNightPhase();
-        }
-        else if (currentPhase == GamePhase.Night)
-        {
-            CompleteDemoPhase();
-        }
+        Debug.Log("Game complete. Player survived " + totalDays + " days.");
     }
 
     private void UpdatePhaseUI(string phaseLabel, string statusMessage)
