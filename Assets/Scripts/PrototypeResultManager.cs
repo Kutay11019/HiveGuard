@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PrototypeResultManager : MonoBehaviour
@@ -8,7 +9,13 @@ public class PrototypeResultManager : MonoBehaviour
     [SerializeField] private GameObject resultPanel;
     [SerializeField] private TextMeshProUGUI resultTitleText;
     [SerializeField] private TextMeshProUGUI resultMessageText;
+
+    [Header("Buttons")]
     [SerializeField] private Button restartDayButton;
+    [SerializeField] private Button mainMenuButton;
+
+    [Header("Scene Settings")]
+    [SerializeField] private string mainMenuSceneName = "00_MainMenu";
 
     [Header("References")]
     [SerializeField] private DayNightCycleManager dayNightCycleManager;
@@ -26,6 +33,12 @@ public class PrototypeResultManager : MonoBehaviour
             restartDayButton.onClick.AddListener(RestartCurrentDay);
         }
 
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.onClick.RemoveListener(GoToMainMenu);
+            mainMenuButton.onClick.AddListener(GoToMainMenu);
+        }
+
         HideResult();
     }
 
@@ -34,7 +47,8 @@ public class PrototypeResultManager : MonoBehaviour
         ShowResult(
             "You Won!",
             "You survived all nights and protected the hive!",
-            false
+            showRestartButton: false,
+            showMainMenuButton: true
         );
     }
 
@@ -43,7 +57,8 @@ public class PrototypeResultManager : MonoBehaviour
         ShowResult(
             "You Lost!",
             defeatMessage,
-            true
+            showRestartButton: true,
+            showMainMenuButton: false
         );
     }
 
@@ -55,7 +70,12 @@ public class PrototypeResultManager : MonoBehaviour
         }
     }
 
-    private void ShowResult(string title, string message, bool showRestartButton)
+    private void ShowResult(
+        string title,
+        string message,
+        bool showRestartButton,
+        bool showMainMenuButton
+    )
     {
         if (resultPanel != null)
         {
@@ -76,6 +96,11 @@ public class PrototypeResultManager : MonoBehaviour
         {
             restartDayButton.gameObject.SetActive(showRestartButton);
         }
+
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.gameObject.SetActive(showMainMenuButton);
+        }
     }
 
     private void RestartCurrentDay()
@@ -84,5 +109,10 @@ public class PrototypeResultManager : MonoBehaviour
         {
             dayNightCycleManager.RestartCurrentDay();
         }
+    }
+
+    private void GoToMainMenu()
+    {
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 }

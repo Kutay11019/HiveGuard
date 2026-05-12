@@ -62,6 +62,46 @@ public class NightEnemyWaveSpawner : MonoBehaviour
         spawnedEnemies.Clear();
     }
 
+    public bool IsCurrentWaveCleared()
+    {
+        if (spawnedEnemies.Count == 0)
+        {
+            return false;
+        }
+
+        for (int i = spawnedEnemies.Count - 1; i >= 0; i--)
+        {
+            GameObject enemy = spawnedEnemies[i];
+
+            if (enemy == null)
+            {
+                spawnedEnemies.RemoveAt(i);
+                continue;
+            }
+
+            BearHealth bearHealth = enemy.GetComponentInChildren<BearHealth>();
+
+            if (bearHealth != null && !bearHealth.IsDead)
+            {
+                return false;
+            }
+
+            WaspHealth waspHealth = enemy.GetComponentInChildren<WaspHealth>();
+
+            if (waspHealth != null && !waspHealth.IsDead)
+            {
+                return false;
+            }
+
+            if (bearHealth == null && waspHealth == null)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private NightWaveConfig GetWaveForDay(int dayNumber)
     {
         if (waves == null || waves.Length == 0)

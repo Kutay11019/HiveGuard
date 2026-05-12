@@ -122,6 +122,13 @@ public class DayNightCycleManager : MonoBehaviour
 
         UpdateTimerUI();
 
+        if (currentPhase == GamePhase.Night && IsNightWaveCleared())
+        {
+            Debug.Log("All night enemies defeated. Finishing night early.");
+            FinishNightPhase();
+            return;
+        }
+
         if (currentTimer <= 0f)
         {
             HandlePhaseTimerFinished();
@@ -218,6 +225,16 @@ public class DayNightCycleManager : MonoBehaviour
         }
 
         nightEnemyWaveSpawner.SpawnWaveForDay(currentDay);
+    }
+
+    private bool IsNightWaveCleared()
+    {
+        if (nightEnemyWaveSpawner == null)
+        {
+            return false;
+        }
+
+        return nightEnemyWaveSpawner.IsCurrentWaveCleared();
     }
 
     private void ClearNightEnemies()
