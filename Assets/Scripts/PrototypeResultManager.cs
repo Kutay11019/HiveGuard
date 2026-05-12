@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PrototypeResultManager : MonoBehaviour
 {
@@ -7,63 +8,55 @@ public class PrototypeResultManager : MonoBehaviour
     [SerializeField] private GameObject resultPanel;
     [SerializeField] private TextMeshProUGUI resultTitleText;
     [SerializeField] private TextMeshProUGUI resultMessageText;
+    [SerializeField] private Button restartDayButton;
 
-    [Header("Objects To Disable When Game Ends")]
-    [SerializeField] private GameObject enemyBear;
+    [Header("References")]
+    [SerializeField] private DayNightCycleManager dayNightCycleManager;
 
-    private bool hasGameEnded = false;
-
-    private void Start()
+    private void Awake()
     {
-        Time.timeScale = 1f;
+        if (dayNightCycleManager == null)
+        {
+            dayNightCycleManager = FindFirstObjectByType<DayNightCycleManager>();
+        }
 
+        if (restartDayButton != null)
+        {
+            restartDayButton.onClick.RemoveListener(RestartCurrentDay);
+            restartDayButton.onClick.AddListener(RestartCurrentDay);
+        }
+
+        HideResult();
+    }
+
+    public void ShowVictory()
+    {
+        ShowResult(
+            "You Won!",
+            "You survived all nights and protected the hive!",
+            false
+        );
+    }
+
+    public void ShowDefeat(string defeatMessage)
+    {
+        ShowResult(
+            "You Lost!",
+            defeatMessage,
+            true
+        );
+    }
+
+    public void HideResult()
+    {
         if (resultPanel != null)
         {
             resultPanel.SetActive(false);
         }
     }
 
-    public void ShowNightSurvived()
+    private void ShowResult(string title, string message, bool showRestartButton)
     {
-        if (hasGameEnded)
-        {
-            return;
-        }
-
-        hasGameEnded = true;
-
-        ShowResult(
-            "Night Survived!",
-            "Prototype Demo Complete"
-        );
-
-        Debug.Log("Night survived. Demo complete.");
-    }
-
-    public void ShowGameOver()
-    {
-        if (hasGameEnded)
-        {
-            return;
-        }
-
-        hasGameEnded = true;
-
-        ShowResult(
-            "Hive Collapsed!",
-            "Game Over"
-        );
-
-        Debug.Log("Hive collapsed. Game over.");
-    }
-
-    private void ShowResult(string title, string message)
-    {
-        if (enemyBear != null)
-        {
-            enemyBear.SetActive(false);
-        }
-
         if (resultPanel != null)
         {
             resultPanel.SetActive(true);
@@ -79,6 +72,17 @@ public class PrototypeResultManager : MonoBehaviour
             resultMessageText.text = message;
         }
 
-        Time.timeScale = 0f;
+        if (restartDayButton != null)
+        {
+            restartDayButton.gameObject.SetActive(showRestartButton);
+        }
+    }
+
+    private void RestartCurrentDay()
+    {
+        if (dayNightCycleManager != null)
+        {
+            dayNightCycleManager.RestartCurrentDay();
+        }
     }
 }

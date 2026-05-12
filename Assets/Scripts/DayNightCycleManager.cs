@@ -7,6 +7,7 @@ public class DayNightCycleManager : MonoBehaviour
     {
         Day,
         Night,
+        GameOver,
         GameComplete
     }
 
@@ -20,6 +21,12 @@ public class DayNightCycleManager : MonoBehaviour
 
     [Header("Night Enemy Waves")]
     [SerializeField] private NightEnemyWaveSpawner nightEnemyWaveSpawner;
+
+    [Header("Player and Hive")]
+    [SerializeField] private BeeHealth beeHealth;
+    [SerializeField] private HiveHealth hiveHealth;
+    [SerializeField] private Transform playerBeeTransform;
+    [SerializeField] private Transform playerDayStartPoint;
 
     [Header("Pollen Spawning")]
     [SerializeField] private PollenSpawnManager3D pollenSpawnManager;
@@ -44,11 +51,35 @@ public class DayNightCycleManager : MonoBehaviour
     private float currentTimer;
     private bool isTimerRunning;
 
+    private int beeHealthAtDayStart;
+    private int hiveHealthAtDayStart;
+    private bool hasDayStartCheckpoint;
+
+    public int CurrentDay => currentDay;
+    public bool IsDayPhase => currentPhase == GamePhase.Day;
+    public bool IsNightPhase => currentPhase == GamePhase.Night;
+    public bool CanDeliverPollen => currentPhase == GamePhase.Day && isTimerRunning;
+
     private void Awake()
     {
-        if (dayObjectiveUI == null)
+        if (nightEnemyWaveSpawner == null)
         {
-            dayObjectiveUI = FindFirstObjectByType<DayObjectiveUI>();
+            nightEnemyWaveSpawner = FindFirstObjectByType<NightEnemyWaveSpawner>();
+        }
+
+        if (beeHealth == null)
+        {
+            beeHealth = FindFirstObjectByType<BeeHealth>();
+        }
+
+        if (hiveHealth == null)
+        {
+            hiveHealth = FindFirstObjectByType<HiveHealth>();
+        }
+
+        if (playerBeeTransform == null && beeHealth != null)
+        {
+            playerBeeTransform = beeHealth.transform;
         }
 
         if (pollenSpawnManager == null)
@@ -56,16 +87,23 @@ public class DayNightCycleManager : MonoBehaviour
             pollenSpawnManager = FindFirstObjectByType<PollenSpawnManager3D>();
         }
 
-        if (nightEnemyWaveSpawner == null)
+        if (dayObjectiveUI == null)
         {
-            nightEnemyWaveSpawner = FindFirstObjectByType<NightEnemyWaveSpawner>();
+            dayObjectiveUI = FindFirstObjectByType<DayObjectiveUI>();
+        }
+
+        if (resultManager == null)
+        {
+            resultManager = FindFirstObjectByType<PrototypeResultManager>();
         }
     }
 
     private void Start()
     {
         currentDay = Mathf.Clamp(currentDay, 1, totalDays);
-        StartDayPhase();
+
+        // İlk gün başlarken mevcut canlar checkpoint olur.
+        StartDayPhase(true);
     }
 
     private void Update()
@@ -90,13 +128,24 @@ public class DayNightCycleManager : MonoBehaviour
         }
     }
 
-    private void StartDayPhase()
+    private void StartDayPhase(bool saveCheckpointForThisDay)
     {
         currentPhase = GamePhase.Day;
         currentTimer = dayDuration;
         isTimerRunning = true;
 
+        if (resultManager != null)
+        {
+            resultManager.HideResult();
+        }
+
         ClearNightEnemies();
+        MovePlayerToDayStartPoint();
+
+        if (saveCheckpointForThisDay)
+        {
+            SaveDayStartCheckpoint();
+        }
 
         if (pollenSpawnManager != null)
         {
@@ -120,7 +169,11 @@ public class DayNightCycleManager : MonoBehaviour
             dayObjectiveUI.ShowDayObjective();
         }
 
-        Debug.Log("Day " + currentDay + " started.");
+        Debug.Log(
+            "Day " + currentDay + " started. " +
+            "Bee checkpoint HP: " + beeHealthAtDayStart +
+            ", Hive checkpoint HP: " + hiveHealthAtDayStart
+        );
     }
 
     private void StartNightPhase()
@@ -198,7 +251,10 @@ public class DayNightCycleManager : MonoBehaviour
         }
 
         currentDay++;
-        StartDayPhase();
+
+        // Yeni gün başlıyor ama can fullenmiyor.
+        // Gece sonunda ne kaldıysa, yeni günün başlangıç checkpoint'i o oluyor.
+        StartDayPhase(true);
     }
 
     private void CompleteGame()
@@ -235,10 +291,129 @@ public class DayNightCycleManager : MonoBehaviour
 
         if (resultManager != null)
         {
-            resultManager.ShowNightSurvived();
+            resultManager.ShowVictory();
         }
 
         Debug.Log("Game complete. Player survived " + totalDays + " days.");
+    }
+
+    public void GameOverBecauseBeeDied()
+    {
+        TriggerGameOver("Your bee was defeated. Restart the day and try again!");
+    }
+
+    public void GameOverBecauseHiveDestroyed()
+    {
+        TriggerGameOver("The hive was destroyed. Restart the day and protect it better!");
+    }
+
+    private void TriggerGameOver(string defeatMessage)
+    {
+        if (currentPhase == GamePhase.GameOver || currentPhase == GamePhase.GameComplete)
+        {
+            return;
+        }
+
+        currentPhase = GamePhase.GameOver;
+        isTimerRunning = false;
+
+        ClearNightEnemies();
+
+        if (pollenSpawnManager != null)
+        {
+            pollenSpawnManager.StopSpawning();
+        }
+
+        if (phaseText != null)
+        {
+            phaseText.text = "GAME OVER";
+        }
+
+        if (statusText != null)
+        {
+            statusText.text = defeatMessage;
+        }
+
+        if (dayObjectiveUI != null)
+        {
+            dayObjectiveUI.HideObjective();
+        }
+
+        if (resultManager != null)
+        {
+            resultManager.ShowDefeat(defeatMessage);
+        }
+
+        Debug.Log("Game over on day " + currentDay + ". " + defeatMessage);
+    }
+
+    public void RestartCurrentDay()
+    {
+        Debug.Log("Restarting day " + currentDay);
+
+        ClearNightEnemies();
+
+        RestoreDayStartCheckpoint();
+
+        // Aynı günü yeniden başlatıyoruz ama checkpoint'i tekrar kaydetmiyoruz.
+        // Çünkü checkpoint zaten o günün başındaki can değerleri.
+        StartDayPhase(false);
+    }
+
+    private void SaveDayStartCheckpoint()
+    {
+        if (beeHealth != null)
+        {
+            beeHealthAtDayStart = beeHealth.CurrentHealth;
+        }
+
+        if (hiveHealth != null)
+        {
+            hiveHealthAtDayStart = hiveHealth.CurrentHealth;
+        }
+
+        hasDayStartCheckpoint = true;
+
+        Debug.Log(
+            "Saved day start checkpoint. " +
+            "Day: " + currentDay +
+            ", Bee HP: " + beeHealthAtDayStart +
+            ", Hive HP: " + hiveHealthAtDayStart
+        );
+    }
+
+    private void RestoreDayStartCheckpoint()
+    {
+        if (!hasDayStartCheckpoint)
+        {
+            SaveDayStartCheckpoint();
+        }
+
+        if (beeHealth != null)
+        {
+            beeHealth.RestoreHealth(beeHealthAtDayStart);
+        }
+
+        if (hiveHealth != null)
+        {
+            hiveHealth.RestoreHealth(hiveHealthAtDayStart);
+        }
+
+        Debug.Log(
+            "Restored day start checkpoint. " +
+            "Day: " + currentDay +
+            ", Bee HP: " + beeHealthAtDayStart +
+            ", Hive HP: " + hiveHealthAtDayStart
+        );
+    }
+
+    private void MovePlayerToDayStartPoint()
+    {
+        if (playerBeeTransform != null && playerDayStartPoint != null)
+        {
+            playerBeeTransform.position = playerDayStartPoint.position;
+            playerBeeTransform.rotation = playerDayStartPoint.rotation;
+        }
     }
 
     private void UpdatePhaseUI(string phaseLabel, string statusMessage)
