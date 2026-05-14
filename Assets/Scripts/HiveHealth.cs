@@ -3,86 +3,107 @@ using UnityEngine;
 
 public class HiveHealth : MonoBehaviour
 {
-    [Header("Health Settings")]
+    [Header("Health")]
     [SerializeField] private int maxHealth = 100;
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI hiveHealthText;
-    [SerializeField] private HealthBarUI healthBarUI;
 
-    [Header("Result Manager")]
-    [SerializeField] private PrototypeResultManager resultManager;
+    [Header("Game Flow")]
+    [SerializeField] private DayNightCycleManager dayNightCycleManager;
 
     private int currentHealth;
+    private bool isDestroyed;
 
-    public bool IsDestroyed => currentHealth <= 0;
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
+    public bool IsDestroyed => isDestroyed;
 
     private void Awake()
     {
         currentHealth = maxHealth;
+        isDestroyed = false;
 
-        if (healthBarUI == null)
+        if (dayNightCycleManager == null)
         {
-            healthBarUI = GetComponentInChildren<HealthBarUI>(true);
+            dayNightCycleManager = FindFirstObjectByType<DayNightCycleManager>();
         }
     }
 
     private void Start()
     {
-        UpdateHealthUI();
+        UpdateUI();
+        Debug.Log("Hive health initialized: " + currentHealth);
     }
 
     public void TakeDamage(int damageAmount)
     {
-        if (IsDestroyed)
+        if (isDestroyed)
+        {
+            return;
+        }
+
+        if (damageAmount <= 0)
         {
             return;
         }
 
         currentHealth -= damageAmount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        if (currentHealth < 0)
-        {
-            currentHealth = 0;
-        }
-
-        UpdateHealthUI();
+        UpdateUI();
 
         Debug.Log("Hive took damage. Current health: " + currentHealth);
 
         if (currentHealth <= 0)
         {
-            HandleHiveDestroyed();
+            DestroyHive();
         }
     }
 
-    private void UpdateHealthUI()
+    public void RestoreHealth(int restoredHealth)
+    {
+        isDestroyed = false;
+
+        currentHealth = Mathf.Clamp(restoredHealth, 1, maxHealth);
+
+        UpdateUI();
+
+        Debug.Log("Hive health restored: " + currentHealth);
+    }
+
+    public void ResetHealthToFull()
+    {
+        isDestroyed = false;
+        currentHealth = maxHealth;
+
+        UpdateUI();
+
+        Debug.Log("Hive health reset to full: " + currentHealth);
+    }
+
+    private void DestroyHive()
+    {
+        if (isDestroyed)
+        {
+            return;
+        }
+
+        isDestroyed = true;
+
+        Debug.Log("Hive destroyed.");
+
+        if (dayNightCycleManager != null)
+        {
+            dayNightCycleManager.GameOverBecauseHiveDestroyed();
+        }
+    }
+
+    private void UpdateUI()
     {
         if (hiveHealthText != null)
         {
-            hiveHealthText.text = "Hive Health: " + currentHealth;
-        }
-
-        if (healthBarUI != null)
-        {
-            healthBarUI.SetHealth(currentHealth, maxHealth);
-        }
-    }
-
-    private void HandleHiveDestroyed()
-    {
-        Debug.Log("Hive collapsed! Game Over.");
-
-        if (healthBarUI != null)
-        {
-            healthBarUI.Hide();
-        }
-
-        if (resultManager != null)
-        {
-            resultManager.ShowGameOver();
+            hiveHealthText.text = "Hive Health:\n" + currentHealth;
         }
     }
 }

@@ -1,5 +1,7 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PrototypeResultManager : MonoBehaviour
 {
@@ -8,62 +10,73 @@ public class PrototypeResultManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI resultTitleText;
     [SerializeField] private TextMeshProUGUI resultMessageText;
 
-    [Header("Objects To Disable When Game Ends")]
-    [SerializeField] private GameObject enemyBear;
+    [Header("Buttons")]
+    [SerializeField] private Button restartDayButton;
+    [SerializeField] private Button mainMenuButton;
 
-    private bool hasGameEnded = false;
+    [Header("Scene Settings")]
+    [SerializeField] private string mainMenuSceneName = "00_MainMenu";
 
-    private void Start()
+    [Header("References")]
+    [SerializeField] private DayNightCycleManager dayNightCycleManager;
+
+    private void Awake()
     {
-        Time.timeScale = 1f;
+        if (dayNightCycleManager == null)
+        {
+            dayNightCycleManager = FindFirstObjectByType<DayNightCycleManager>();
+        }
 
+        if (restartDayButton != null)
+        {
+            restartDayButton.onClick.RemoveListener(RestartCurrentDay);
+            restartDayButton.onClick.AddListener(RestartCurrentDay);
+        }
+
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.onClick.RemoveListener(GoToMainMenu);
+            mainMenuButton.onClick.AddListener(GoToMainMenu);
+        }
+
+        HideResult();
+    }
+
+    public void ShowVictory()
+    {
+        ShowResult(
+            "You Won!",
+            "You survived all nights and protected the hive!",
+            showRestartButton: false,
+            showMainMenuButton: true
+        );
+    }
+
+    public void ShowDefeat(string defeatMessage)
+    {
+        ShowResult(
+            "You Lost!",
+            defeatMessage,
+            showRestartButton: true,
+            showMainMenuButton: false
+        );
+    }
+
+    public void HideResult()
+    {
         if (resultPanel != null)
         {
             resultPanel.SetActive(false);
         }
     }
 
-    public void ShowNightSurvived()
+    private void ShowResult(
+        string title,
+        string message,
+        bool showRestartButton,
+        bool showMainMenuButton
+    )
     {
-        if (hasGameEnded)
-        {
-            return;
-        }
-
-        hasGameEnded = true;
-
-        ShowResult(
-            "Night Survived!",
-            "Prototype Demo Complete"
-        );
-
-        Debug.Log("Night survived. Demo complete.");
-    }
-
-    public void ShowGameOver()
-    {
-        if (hasGameEnded)
-        {
-            return;
-        }
-
-        hasGameEnded = true;
-
-        ShowResult(
-            "Hive Collapsed!",
-            "Game Over"
-        );
-
-        Debug.Log("Hive collapsed. Game over.");
-    }
-
-    private void ShowResult(string title, string message)
-    {
-        if (enemyBear != null)
-        {
-            enemyBear.SetActive(false);
-        }
-
         if (resultPanel != null)
         {
             resultPanel.SetActive(true);
@@ -79,6 +92,27 @@ public class PrototypeResultManager : MonoBehaviour
             resultMessageText.text = message;
         }
 
-        Time.timeScale = 0f;
+        if (restartDayButton != null)
+        {
+            restartDayButton.gameObject.SetActive(showRestartButton);
+        }
+
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.gameObject.SetActive(showMainMenuButton);
+        }
+    }
+
+    private void RestartCurrentDay()
+    {
+        if (dayNightCycleManager != null)
+        {
+            dayNightCycleManager.RestartCurrentDay();
+        }
+    }
+
+    private void GoToMainMenu()
+    {
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 }

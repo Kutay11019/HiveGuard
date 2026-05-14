@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3571082115040284575}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Front_Leg_Tip.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 400834675404331103}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Thorax_Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2148474139363198672}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Armature
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +105,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3011687537938280293}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Antenna_Base.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +137,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7941819098019894869}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Back_Leg_Mid.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6430475253525453579}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Front_Leg_Mid.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -201,7 +201,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 126884100024792614}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Antenna_Tip.r_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -232,7 +232,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2085520415866130398}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Thorax1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -264,7 +264,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2967379494159002440}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +296,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7083438491153159865}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Stinger_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -327,7 +327,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7015418474482038277}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Wing.r_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -358,7 +358,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2890470212528126226}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Front_Leg_Base.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -390,7 +390,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 751231623133741837}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Mid_Leg_Tip.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -422,7 +422,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2080605867305840053}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Back_Leg_Base.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -454,7 +454,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6907712181021128065}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Front_Leg_Tip.r_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -485,7 +485,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7398920607269724394}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Thorax_Tip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -517,7 +517,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7504582356386907203}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Thorax2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -550,7 +550,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3569792703378240363}
   - component: {fileID: 3523796732038331141}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Wasp_Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -678,7 +678,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8397284301372093152}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Back_Leg_Tip.r_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -709,7 +709,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6323226368343800790}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Back_Leg_Base.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -741,7 +741,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4714598439609308952}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Back_Leg_Mid.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -773,7 +773,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4633436529779155026}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Antenna1.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -805,7 +805,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6787595077521248542}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Antenna_Tip.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -837,7 +837,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7099150556860666062}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Wing.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -869,7 +869,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2246322688851409897}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Master
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -910,7 +910,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8678999347786869853}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Front_Leg_Mid.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -942,7 +942,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2301113653966365854}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Stinger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -965,6 +965,82 @@ Transform:
   - {fileID: 7083438491153159865}
   m_Father: {fileID: 7398920607269724394}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3764617851696119457
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1820126096023595208}
+  - component: {fileID: 4018957693984264469}
+  - component: {fileID: 4580493442454020182}
+  m_Layer: 7
+  m_Name: BarBackground
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1820126096023595208
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3764617851696119457}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8843421703639175934}
+  m_Father: {fileID: 1132220864123803123}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 118.27, y: 12}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &4018957693984264469
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3764617851696119457}
+  m_CullTransparentMesh: 1
+--- !u!114 &4580493442454020182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3764617851696119457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.22264141, g: 0.22264141, b: 0.22264141, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &3798927212662172073
 GameObject:
   m_ObjectHideFlags: 0
@@ -974,7 +1050,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8623006038482338019}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Wing.l_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1005,7 +1081,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4633063116126089972}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Mid_Leg_Mid.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1037,7 +1113,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8768068073795845359}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Antenna_Base.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1069,7 +1145,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8741247385514220240}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Mid_Leg_Mid.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1101,7 +1177,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1121299714504539538}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Back_Leg_Tip.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1133,7 +1209,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4424458201504878132}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Front_Leg_Tip.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1156,6 +1232,140 @@ Transform:
   - {fileID: 4361284785192599898}
   m_Father: {fileID: 6430475253525453579}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4854796864166284747
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1132220864123803123}
+  - component: {fileID: 3685070249013366247}
+  - component: {fileID: 4638769097997614872}
+  - component: {fileID: 8486240700033263582}
+  - component: {fileID: 2481293374001095751}
+  - component: {fileID: 50546363826461561}
+  m_Layer: 7
+  m_Name: WaspHealthBar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1132220864123803123
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4854796864166284747}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1820126096023595208}
+  m_Father: {fileID: 7016674784112055886}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 2.5}
+  m_SizeDelta: {x: 120, y: 18}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!223 &3685070249013366247
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4854796864166284747}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &4638769097997614872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4854796864166284747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 1
+--- !u!114 &8486240700033263582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4854796864166284747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &2481293374001095751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4854796864166284747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463a08df44b918246971dee8f86f0316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthBarUI
+  fillRect: {fileID: 8843421703639175934}
+  rootObject: {fileID: 4854796864166284747}
+  hideWhenFull: 0
+  hideWhenEmpty: 1
+--- !u!114 &50546363826461561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4854796864166284747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ad4350413eaef144985279d09938c55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BillboardToCamera
+  lockXRotation: 0
+  lockZRotation: 0
 --- !u!1 &4877291481437134035
 GameObject:
   m_ObjectHideFlags: 0
@@ -1165,7 +1375,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8293608460491170556}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Back_Leg_Tip.l_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1196,7 +1406,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8605301648228996239}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Antenna2.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1228,7 +1438,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6439146065970828167}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Mid_Leg_Tip.l_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1259,7 +1469,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7126251058601267992}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Back_Leg_Tip.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1291,7 +1501,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1335248437915592339}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Mid_Leg_Base.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1323,7 +1533,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 452933566667416493}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Front_Leg_Base.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1355,7 +1565,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 588347351944282854}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Mid_Leg_Tip.r_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1386,7 +1596,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2688822108917288544}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Antenna_Tip.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1418,7 +1628,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 913720709918589701}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Wing.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1450,7 +1660,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5087881138609702570}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Antenna2.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1482,7 +1692,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9051247004471160617}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Antenna_Tip.l_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1513,7 +1723,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7701007750994552588}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Antenna1.l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1545,7 +1755,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3530059551194666236}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Mid_Leg_Base.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1577,7 +1787,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1195788936084316665}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1615,7 +1825,7 @@ GameObject:
   - component: {fileID: 3167235350157598498}
   - component: {fileID: 803938920623269692}
   - component: {fileID: 8606824497124008953}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: EnemyWasp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1635,6 +1845,7 @@ Transform:
   m_LocalScale: {x: 0.53, y: 0.53, z: 0.53}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 1132220864123803123}
   - {fileID: 2148474139363198672}
   - {fileID: 3569792703378240363}
   m_Father: {fileID: 0}
@@ -1700,16 +1911,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df67f238a6d69bf469609829b6b8bca7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  playerBeeTarget: {fileID: 0}
   hiveTarget: {fileID: 0}
   moveSpeed: 7
   attackDistance: 1.4
   rotationSpeed: 10
-  maxHealth: 2
+  damageToBee: 1
   damageToHive: 5
   attackCooldown: 1
   animator: {fileID: 0}
   attackTriggerName: Attack
-  deathTriggerName: Die
   isMovingBoolName: IsMoving
 --- !u!136 &803938920623269692
 CapsuleCollider:
@@ -1750,6 +1961,7 @@ MonoBehaviour:
   animator: {fileID: 5017305594985875648}
   deathTriggerName: Die
   destroyDelay: 1.5
+  healthBarUI: {fileID: 0}
 --- !u!1 &8216229149102625260
 GameObject:
   m_ObjectHideFlags: 0
@@ -1759,7 +1971,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4361284785192599898}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Front_Leg_Tip.l_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1781,6 +1993,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4424458201504878132}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8331634740417906488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8843421703639175934}
+  - component: {fileID: 5817131212055529260}
+  - component: {fileID: 8777659791395462581}
+  m_Layer: 7
+  m_Name: BarFill
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &8843421703639175934
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8331634740417906488}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1820126096023595208}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -20, y: 12}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &5817131212055529260
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8331634740417906488}
+  m_CullTransparentMesh: 1
+--- !u!114 &8777659791395462581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8331634740417906488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.070808016, g: 0.9622642, b: 0.12188981, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &8534818744739754047
 GameObject:
   m_ObjectHideFlags: 0
@@ -1790,7 +2077,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7173755552798820790}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Mid_Leg_Tip.r
   m_TagString: Untagged
   m_Icon: {fileID: 0}

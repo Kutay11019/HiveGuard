@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
@@ -10,11 +11,12 @@ public class BeeAttack3D : MonoBehaviour
     [SerializeField] private int attackDamage = 1;
     [SerializeField] private float attackCooldown = 0.6f;
 
+    [Header("Enemy Detection")]
     [FormerlySerializedAs("bearLayer")]
     [SerializeField] private LayerMask enemyLayer;
 
     [Header("Input Settings")]
-    [SerializeField] private bool useLeftMouse = true;
+    [SerializeField] private bool useLeftMouse = false;
     [SerializeField] private bool useFKey = true;
 
     [Header("References")]
@@ -32,31 +34,59 @@ public class BeeAttack3D : MonoBehaviour
 
     private void Update()
     {
-        if (WasAttackPressed())
+        if (WasKeyboardAttackPressed())
+        {
+            TryAttack();
+            return;
+        }
+
+        if (WasMouseAttackPressed())
         {
             TryAttack();
         }
     }
 
-    private bool WasAttackPressed()
+    private bool WasKeyboardAttackPressed()
     {
-        bool mousePressed = false;
-        bool fPressed = false;
-
-        if (useLeftMouse && Mouse.current != null)
+        if (!useFKey || Keyboard.current == null)
         {
-            mousePressed = Mouse.current.leftButton.wasPressedThisFrame;
+            return false;
         }
 
-        if (useFKey && Keyboard.current != null)
-        {
-            fPressed = Keyboard.current.fKey.wasPressedThisFrame;
-        }
-
-        return mousePressed || fPressed;
+        return Keyboard.current.fKey.wasPressedThisFrame;
     }
 
-    // UI Button OnClick için bunu kullanabilirsin.
+    private bool WasMouseAttackPressed()
+    {
+        if (!useLeftMouse || Mouse.current == null)
+        {
+            return false;
+        }
+
+        if (!Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            return false;
+        }
+
+        if (IsPointerOverUI())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool IsPointerOverUI()
+    {
+        if (EventSystem.current == null)
+        {
+            return false;
+        }
+
+        return EventSystem.current.IsPointerOverGameObject();
+    }
+
+    // Attack Button OnClick burayı çağırmalı.
     public void Attack()
     {
         TryAttack();
@@ -76,10 +106,10 @@ public class BeeAttack3D : MonoBehaviour
             beeAnimatorDriver.PlayAttackAnimation();
         }
 
-        DealDamageToEnemiesInRange();
+        DealDamageToSingleEnemyInRange();
     }
 
-    private void DealDamageToEnemiesInRange()
+    private void DealDamageToSingleEnemyInRange()
     {
         Collider[] hitColliders = Physics.OverlapSphere(
             transform.position,
@@ -88,8 +118,13 @@ public class BeeAttack3D : MonoBehaviour
             QueryTriggerInteraction.Collide
         );
 
-        HashSet<BearHealth> damagedBears = new HashSet<BearHealth>();
-        HashSet<WaspHealth> damagedWasps = new HashSet<WaspHealth>();
+        BearHealth closestBear = null;
+        WaspHealth closestWasp = null;
+
+        float closestDistance = Mathf.Infinity;
+
+        HashSet<BearHealth> checkedBears = new HashSet<BearHealth>();
+        HashSet<WaspHealth> checkedWasps = new HashSet<WaspHealth>();
 
         foreach (Collider hitCollider in hitColliders)
         {
@@ -102,15 +137,25 @@ public class BeeAttack3D : MonoBehaviour
                     continue;
                 }
 
-                if (damagedBears.Contains(bearHealth))
+                if (checkedBears.Contains(bearHealth))
                 {
                     continue;
                 }
 
-                damagedBears.Add(bearHealth);
-                bearHealth.TakeDamage(attackDamage);
+                checkedBears.Add(bearHealth);
 
-                Debug.Log("Bee attacked bear: " + bearHealth.gameObject.name);
+                float distanceToBear = Vector3.Distance(
+                    transform.position,
+                    bearHealth.transform.position
+                );
+
+                if (distanceToBear < closestDistance)
+                {
+                    closestDistance = distanceToBear;
+                    closestBear = bearHealth;
+                    closestWasp = null;
+                }
+
                 continue;
             }
 
@@ -118,31 +163,54 @@ public class BeeAttack3D : MonoBehaviour
 
             if (waspHealth != null)
             {
-                if (damagedWasps.Contains(waspHealth))
+                if (waspHealth.IsDead)
                 {
                     continue;
                 }
 
-                damagedWasps.Add(waspHealth);
-                waspHealth.TakeDamage(attackDamage);
+                if (checkedWasps.Contains(waspHealth))
+                {
+                    continue;
+                }
 
-                Debug.Log("Bee attacked wasp: " + waspHealth.gameObject.name);
+                checkedWasps.Add(waspHealth);
+
+                float distanceToWasp = Vector3.Distance(
+                    transform.position,
+                    waspHealth.transform.position
+                );
+
+                if (distanceToWasp < closestDistance)
+                {
+                    closestDistance = distanceToWasp;
+                    closestBear = null;
+                    closestWasp = waspHealth;
+                }
+
                 continue;
             }
 
-            Debug.LogWarning("Object was in enemy layer, but has no BearHealth or WaspHealth: " + hitCollider.name);
+            Debug.LogWarning(
+                "Object was in enemy layer, but has no BearHealth or WaspHealth: "
+                + hitCollider.name
+            );
         }
 
-        int totalDamagedEnemies = damagedBears.Count + damagedWasps.Count;
+        if (closestBear != null)
+        {
+            closestBear.TakeDamage(attackDamage);
+            Debug.Log("Bee attacked single bear target: " + closestBear.gameObject.name);
+            return;
+        }
 
-        if (totalDamagedEnemies == 0)
+        if (closestWasp != null)
         {
-            Debug.Log("Bee attacked, but no enemy was in range.");
+            closestWasp.TakeDamage(attackDamage);
+            Debug.Log("Bee attacked single wasp target: " + closestWasp.gameObject.name);
+            return;
         }
-        else
-        {
-            Debug.Log("Bee attacked enemy count: " + totalDamagedEnemies);
-        }
+
+        Debug.Log("Bee attacked, but no enemy was in range.");
     }
 
     private void OnDrawGizmosSelected()
