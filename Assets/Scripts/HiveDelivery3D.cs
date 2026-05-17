@@ -49,7 +49,7 @@ public class HiveDelivery3D : MonoBehaviour
 
         Debug.Log("Delivered pollen to hive: " + inventory.CurrentPollen);
 
-        inventory.RemoveAllPollen();
+        inventory.DepositCarriedToHive();
 
         if (objectiveUI != null)
         {

@@ -134,7 +134,7 @@ public class NightTransitionPanel : MonoBehaviour
     {
         if (pollenAmountText != null && pollenInventory != null)
         {
-            pollenAmountText.text = "Pollen: " + pollenInventory.CurrentPollen;
+            pollenAmountText.text = "Hive Pollen: " + pollenInventory.StoredPollen;
         }
 
         if (upgradeRows == null || upgradeManager == null)
@@ -156,7 +156,7 @@ public class NightTransitionPanel : MonoBehaviour
 
             if (row.purchaseButton != null)
             {
-                bool canAfford = pollenInventory != null && pollenInventory.CurrentPollen >= upgradeManager.GetCost(row.type);
+                bool canAfford = pollenInventory != null && pollenInventory.StoredPollen >= upgradeManager.GetCost(row.type);
                 row.purchaseButton.interactable = !isMax && canAfford;
             }
         }
@@ -221,7 +221,7 @@ public class NightTransitionPanel : MonoBehaviour
 
         upgradePanel = CreatePanel("UpgradePanel", rootPanel.transform, new Vector2(700, 520), new Color(0.12f, 0.1f, 0.18f, 0.95f));
         CreateText("Title", upgradePanel.transform, "Upgrades", 38, new Vector2(0, 215), new Vector2(500, 60), new Color(1f, 0.95f, 0.8f));
-        pollenAmountText = CreateText("PollenAmountText", upgradePanel.transform, "Pollen: 0", 26, new Vector2(-30, 160), new Vector2(320, 40), new Color(1f, 0.85f, 0.4f));
+        pollenAmountText = CreateText("PollenAmountText", upgradePanel.transform, "Hive Pollen: 0", 26, new Vector2(-30, 160), new Vector2(320, 40), new Color(1f, 0.85f, 0.4f));
         closeUpgradesButton = CreateButton("CloseButton", upgradePanel.transform, "X", new Vector2(295, 215), new Vector2(60, 60), new Color(0.8f, 0.25f, 0.25f), Color.white);
 
         upgradeRows = new UpgradeRow[]

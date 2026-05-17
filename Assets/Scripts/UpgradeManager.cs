@@ -119,9 +119,9 @@ public class UpgradeManager : MonoBehaviour
 
         int cost = GetCost(type);
 
-        if (!inventory.TrySpendPollen(cost))
+        if (!inventory.TrySpendStoredPollen(cost))
         {
-            Debug.Log("Not enough pollen for " + type + ". Need: " + cost + ", have: " + inventory.CurrentPollen);
+            Debug.Log("Not enough pollen for " + type + ". Need: " + cost + ", have: " + inventory.StoredPollen);
             return false;
         }
 
@@ -129,7 +129,7 @@ public class UpgradeManager : MonoBehaviour
 
         ApplyUpgradeImmediateEffect(type);
 
-        Debug.Log("Purchased " + type + " (now level " + levels[type] + "). Pollen left: " + inventory.CurrentPollen);
+        Debug.Log("Purchased " + type + " (now level " + levels[type] + "). Pollen left: " + inventory.StoredPollen);
 
         OnUpgradePurchased?.Invoke();
 
