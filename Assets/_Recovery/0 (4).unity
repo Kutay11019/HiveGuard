@@ -3209,8 +3209,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b79ccae8f2a5b0448aa62fc630a72d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayNightCycleManager
-  dayDuration: 15
-  nightDuration: 20
+  dayDuration: 5
+  nightDuration: 10
   totalDays: 5
   currentDay: 1
   nightEnemyWaveSpawner: {fileID: 1242230899}
