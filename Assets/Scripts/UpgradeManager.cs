@@ -12,6 +12,7 @@ public class UpgradeManager : MonoBehaviour
         public int baseCost = 5;
         public int maxLevel = 5;
         public float effectPerLevel = 1f;
+        public float hiveEffectPerLevel = 0f;
     }
 
     [Header("Upgrade Definitions")]
@@ -19,11 +20,12 @@ public class UpgradeManager : MonoBehaviour
     {
         new UpgradeConfig { type = UpgradeType.BeeSpeed,     displayName = "Bee Speed",     baseCost = 5, maxLevel = 5, effectPerLevel = 0.2f },
         new UpgradeConfig { type = UpgradeType.AttackDamage, displayName = "Attack Damage", baseCost = 8, maxLevel = 5, effectPerLevel = 1f },
-        new UpgradeConfig { type = UpgradeType.MaxHealth,    displayName = "Max Health",    baseCost = 6, maxLevel = 5, effectPerLevel = 2f },
+        new UpgradeConfig { type = UpgradeType.MaxHealth,    displayName = "Max Health",    baseCost = 6, maxLevel = 5, effectPerLevel = 2f, hiveEffectPerLevel = 10f },
     };
 
     [Header("References")]
     [SerializeField] private BeeHealth beeHealth;
+    [SerializeField] private HiveHealth hiveHealth;
 
     public static UpgradeManager Instance { get; private set; }
 
@@ -53,6 +55,11 @@ public class UpgradeManager : MonoBehaviour
         {
             beeHealth = FindFirstObjectByType<BeeHealth>();
         }
+
+        if (hiveHealth == null)
+        {
+            hiveHealth = FindFirstObjectByType<HiveHealth>();
+        }
     }
 
     private void OnDestroy()
@@ -61,6 +68,28 @@ public class UpgradeManager : MonoBehaviour
         {
             Instance = null;
         }
+    }
+
+    public Dictionary<UpgradeType, int> SnapshotLevels()
+    {
+        return new Dictionary<UpgradeType, int>(levels);
+    }
+
+    public void RestoreLevels(Dictionary<UpgradeType, int> snapshot)
+    {
+        foreach (UpgradeConfig config in upgrades)
+        {
+            int restored = 0;
+
+            if (snapshot != null && snapshot.TryGetValue(config.type, out int snapLevel))
+            {
+                restored = snapLevel;
+            }
+
+            levels[config.type] = restored;
+        }
+
+        OnUpgradePurchased?.Invoke();
     }
 
     public int GetLevel(UpgradeType type)
@@ -172,6 +201,19 @@ public class UpgradeManager : MonoBehaviour
         return Mathf.RoundToInt(GetLevel(UpgradeType.MaxHealth) * config.effectPerLevel);
     }
 
+    public int GetHiveMaxHealthBonus()
+    {
+        UpgradeConfig config = FindConfig(UpgradeType.MaxHealth);
+
+        if (config == null)
+        {
+            return 0;
+        }
+
+        return Mathf.RoundToInt(GetLevel(UpgradeType.MaxHealth) * config.hiveEffectPerLevel);
+    }
+
+
     private void ApplyUpgradeImmediateEffect(UpgradeType type)
     {
         // MaxHealth runtime'da artırılmalı; Speed ve AttackDamage script'leri her frame okuyor.
@@ -196,6 +238,21 @@ public class UpgradeManager : MonoBehaviour
         if (delta > 0)
         {
             beeHealth.IncreaseMaxHealth(delta);
+        }
+
+        int hiveDelta = config != null ? Mathf.RoundToInt(config.hiveEffectPerLevel) : 0;
+
+        if (hiveDelta > 0)
+        {
+            if (hiveHealth == null)
+            {
+                hiveHealth = FindFirstObjectByType<HiveHealth>();
+            }
+
+            if (hiveHealth != null)
+            {
+                hiveHealth.IncreaseMaxHealth(hiveDelta);
+            }
         }
     }
 

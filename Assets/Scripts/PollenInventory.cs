@@ -26,6 +26,12 @@ public class PollenInventory : MonoBehaviour
         Debug.Log("Pollen carried inventory cleared.");
     }
 
+    public void SetStoredPollen(int amount)
+    {
+        StoredPollen = Mathf.Max(0, amount);
+        Debug.Log("Hive pollen set to " + StoredPollen);
+    }
+
     public bool TrySpendStoredPollen(int amount)
     {
         if (amount <= 0)

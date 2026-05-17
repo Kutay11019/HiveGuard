@@ -82,6 +82,32 @@ public class HiveHealth : MonoBehaviour
         Debug.Log("Hive health reset to full: " + currentHealth);
     }
 
+    public void IncreaseMaxHealth(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        maxHealth += amount;
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        UpdateUI();
+
+        Debug.Log("Hive max health increased by " + amount + ". New max: " + maxHealth);
+    }
+
+    public void SetMaxHealth(int newMax)
+    {
+        maxHealth = Mathf.Max(1, newMax);
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        UpdateUI();
+
+        Debug.Log("Hive max health set to " + maxHealth);
+    }
+
     private void DestroyHive()
     {
         if (isDestroyed)
@@ -103,7 +129,7 @@ public class HiveHealth : MonoBehaviour
     {
         if (hiveHealthText != null)
         {
-            hiveHealthText.text = "Hive Health:\n" + currentHealth;
+            hiveHealthText.text = "Hive Health:\n" + currentHealth + " / " + maxHealth;
         }
     }
 }

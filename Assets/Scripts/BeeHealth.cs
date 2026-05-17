@@ -123,6 +123,16 @@ public class BeeHealth : MonoBehaviour
         RestoreHealth(maxHealth);
     }
 
+    public void SetMaxHealth(int newMax)
+    {
+        maxHealth = Mathf.Max(1, newMax);
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        UpdateHealthBar();
+
+        Debug.Log("Bee max health set to " + maxHealth);
+    }
+
     public void IncreaseMaxHealth(int amount)
     {
         if (amount <= 0)

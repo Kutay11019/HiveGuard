@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -30,6 +31,7 @@ public class DayNightCycleManager : MonoBehaviour
 
     [Header("Pollen Spawning")]
     [SerializeField] private PollenSpawnManager3D pollenSpawnManager;
+    [SerializeField] private PollenInventory pollenInventory;
 
     [Header("Lighting Optional")]
     [SerializeField] private Light directionalLight;
@@ -58,6 +60,10 @@ public class DayNightCycleManager : MonoBehaviour
     private int beeHealthAtDayStart;
     private int hiveHealthAtDayStart;
     private bool hasDayStartCheckpoint;
+    private int beeMaxHealthAtDayStart;
+    private int hiveMaxHealthAtDayStart;
+    private Dictionary<UpgradeType, int> upgradeLevelsAtDayStart;
+    private int storedPollenAtDayStart;
 
     public int CurrentDay => currentDay;
     public bool IsDayPhase => currentPhase == GamePhase.Day;
@@ -89,6 +95,11 @@ public class DayNightCycleManager : MonoBehaviour
         if (pollenSpawnManager == null)
         {
             pollenSpawnManager = FindFirstObjectByType<PollenSpawnManager3D>();
+        }
+
+        if (pollenInventory == null)
+        {
+            pollenInventory = FindFirstObjectByType<PollenInventory>();
         }
 
         if (dayObjectiveUI == null)
@@ -441,13 +452,36 @@ public class DayNightCycleManager : MonoBehaviour
             hiveHealthAtDayStart = hiveHealth.CurrentHealth;
         }
 
+        if (beeHealth != null)
+        {
+            beeMaxHealthAtDayStart = beeHealth.MaxHealth;
+        }
+        if (hiveHealth != null)
+        {
+            hiveMaxHealthAtDayStart = hiveHealth.MaxHealth;
+        }
+
+
+        if (UpgradeManager.Instance != null)
+        {
+            upgradeLevelsAtDayStart = UpgradeManager.Instance.SnapshotLevels();
+        }
+
+        if (pollenInventory != null)
+        {
+            storedPollenAtDayStart = pollenInventory.StoredPollen;
+        }
+
         hasDayStartCheckpoint = true;
 
         Debug.Log(
             "Saved day start checkpoint. " +
             "Day: " + currentDay +
             ", Bee HP: " + beeHealthAtDayStart +
-            ", Hive HP: " + hiveHealthAtDayStart
+            ", Hive HP: " + hiveHealthAtDayStart +
+            ", Bee MaxHP: " + beeMaxHealthAtDayStart +
+            ", Hive MaxHP: " + hiveMaxHealthAtDayStart +
+            ", Hive Pollen: " + storedPollenAtDayStart
         );
     }
 
@@ -460,19 +494,34 @@ public class DayNightCycleManager : MonoBehaviour
 
         if (beeHealth != null)
         {
+            beeHealth.SetMaxHealth(beeMaxHealthAtDayStart);
             beeHealth.RestoreHealth(beeHealthAtDayStart);
         }
 
         if (hiveHealth != null)
         {
+            hiveHealth.SetMaxHealth(hiveMaxHealthAtDayStart);
             hiveHealth.RestoreHealth(hiveHealthAtDayStart);
+        }
+
+        if (UpgradeManager.Instance != null)
+        {
+            UpgradeManager.Instance.RestoreLevels(upgradeLevelsAtDayStart);
+        }
+
+        if (pollenInventory != null)
+        {
+            pollenInventory.SetStoredPollen(storedPollenAtDayStart);
         }
 
         Debug.Log(
             "Restored day start checkpoint. " +
             "Day: " + currentDay +
             ", Bee HP: " + beeHealthAtDayStart +
-            ", Hive HP: " + hiveHealthAtDayStart
+            ", Hive HP: " + hiveHealthAtDayStart +
+            ", Bee MaxHP: " + beeMaxHealthAtDayStart +
+            ", Hive MaxHP: " + hiveMaxHealthAtDayStart +
+            ", Hive Pollen: " + storedPollenAtDayStart
         );
     }
 
