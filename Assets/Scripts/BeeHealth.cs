@@ -38,6 +38,8 @@ public class BeeHealth : MonoBehaviour
 
     private void Awake()
     {
+        ApplyStartingMaxHealthBonus();
+
         currentHealth = maxHealth;
 
         if (healthBarUI == null)
@@ -119,6 +121,37 @@ public class BeeHealth : MonoBehaviour
     public void ResetHealthToFull()
     {
         RestoreHealth(maxHealth);
+    }
+
+    public void IncreaseMaxHealth(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        maxHealth += amount;
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        UpdateHealthBar();
+
+        Debug.Log("Bee max health increased by " + amount + ". New max: " + maxHealth);
+    }
+
+    private void ApplyStartingMaxHealthBonus()
+    {
+        if (UpgradeManager.Instance == null)
+        {
+            return;
+        }
+
+        int bonus = UpgradeManager.Instance.GetMaxHealthBonus();
+
+        if (bonus > 0)
+        {
+            maxHealth += bonus;
+        }
     }
 
     private void PlayDamageAnimation()

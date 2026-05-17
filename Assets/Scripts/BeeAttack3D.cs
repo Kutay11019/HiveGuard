@@ -196,21 +196,33 @@ public class BeeAttack3D : MonoBehaviour
             );
         }
 
+        int totalDamage = attackDamage + GetUpgradeAttackBonus();
+
         if (closestBear != null)
         {
-            closestBear.TakeDamage(attackDamage);
-            Debug.Log("Bee attacked single bear target: " + closestBear.gameObject.name);
+            closestBear.TakeDamage(totalDamage);
+            Debug.Log("Bee attacked single bear target: " + closestBear.gameObject.name + " for " + totalDamage);
             return;
         }
 
         if (closestWasp != null)
         {
-            closestWasp.TakeDamage(attackDamage);
-            Debug.Log("Bee attacked single wasp target: " + closestWasp.gameObject.name);
+            closestWasp.TakeDamage(totalDamage);
+            Debug.Log("Bee attacked single wasp target: " + closestWasp.gameObject.name + " for " + totalDamage);
             return;
         }
 
         Debug.Log("Bee attacked, but no enemy was in range.");
+    }
+
+    private int GetUpgradeAttackBonus()
+    {
+        if (UpgradeManager.Instance == null)
+        {
+            return 0;
+        }
+
+        return UpgradeManager.Instance.GetAttackBonus();
     }
 
     private void OnDrawGizmosSelected()

@@ -47,9 +47,13 @@ public class DayNightCycleManager : MonoBehaviour
     [Header("Result Manager")]
     [SerializeField] private PrototypeResultManager resultManager;
 
+    [Header("Night Transition Panel")]
+    public NightTransitionPanel nightTransitionPanel;
+
     private GamePhase currentPhase;
     private float currentTimer;
     private bool isTimerRunning;
+    private bool isWaitingForNightConfirmation;
 
     private int beeHealthAtDayStart;
     private int hiveHealthAtDayStart;
@@ -95,6 +99,25 @@ public class DayNightCycleManager : MonoBehaviour
         if (resultManager == null)
         {
             resultManager = FindFirstObjectByType<PrototypeResultManager>();
+        }
+
+        if (nightTransitionPanel == null)
+        {
+            nightTransitionPanel = FindFirstObjectByType<NightTransitionPanel>();
+        }
+
+        if (nightTransitionPanel != null)
+        {
+            nightTransitionPanel.OnContinueRequested -= HandleNightTransitionContinue;
+            nightTransitionPanel.OnContinueRequested += HandleNightTransitionContinue;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (nightTransitionPanel != null)
+        {
+            nightTransitionPanel.OnContinueRequested -= HandleNightTransitionContinue;
         }
     }
 
@@ -249,12 +272,41 @@ public class DayNightCycleManager : MonoBehaviour
     {
         if (currentPhase == GamePhase.Day)
         {
-            StartNightPhase();
+            TryShowNightTransitionPanel();
         }
         else if (currentPhase == GamePhase.Night)
         {
             FinishNightPhase();
         }
+    }
+
+    private void TryShowNightTransitionPanel()
+    {
+        if (isWaitingForNightConfirmation)
+        {
+            return;
+        }
+
+        if (nightTransitionPanel == null)
+        {
+            StartNightPhase();
+            return;
+        }
+
+        isWaitingForNightConfirmation = true;
+        isTimerRunning = false;
+        nightTransitionPanel.Show();
+    }
+
+    private void HandleNightTransitionContinue()
+    {
+        if (!isWaitingForNightConfirmation)
+        {
+            return;
+        }
+
+        isWaitingForNightConfirmation = false;
+        StartNightPhase();
     }
 
     private void FinishNightPhase()

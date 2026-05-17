@@ -93,12 +93,24 @@ public class BeeMovement3D : MonoBehaviour
         return new Vector2(moveX, moveZ).normalized;
     }
 
+    private float GetUpgradeSpeedMultiplier()
+    {
+        if (UpgradeManager.Instance == null)
+        {
+            return 1f;
+        }
+
+        return UpgradeManager.Instance.GetSpeedMultiplier();
+    }
+
     private void FixedUpdate()
     {
+        float effectiveSpeed = moveSpeed * GetUpgradeSpeedMultiplier();
+
         Vector3 targetVelocity = new Vector3(
-            movementInput.x * moveSpeed,
+            movementInput.x * effectiveSpeed,
             0f,
-            movementInput.z * moveSpeed
+            movementInput.z * effectiveSpeed
         );
 
         rb.linearVelocity = targetVelocity;

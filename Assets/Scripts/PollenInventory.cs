@@ -15,4 +15,21 @@ public class PollenInventory : MonoBehaviour
         CurrentPollen = 0;
         Debug.Log("Pollen delivered. Inventory is now empty.");
     }
+
+    public bool TrySpendPollen(int amount)
+    {
+        if (amount <= 0)
+        {
+            return false;
+        }
+
+        if (CurrentPollen < amount)
+        {
+            return false;
+        }
+
+        CurrentPollen -= amount;
+        Debug.Log("Spent " + amount + " pollen. Remaining: " + CurrentPollen);
+        return true;
+    }
 }
