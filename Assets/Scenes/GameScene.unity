@@ -3219,6 +3219,7 @@ MonoBehaviour:
   playerBeeTransform: {fileID: 240237330}
   playerDayStartPoint: {fileID: 712689149}
   pollenSpawnManager: {fileID: 16656591}
+  pollenInventory: {fileID: 0}
   directionalLight: {fileID: 1405325623}
   dayLightIntensity: 1.2
   nightLightIntensity: 0.35
@@ -3265,17 +3266,21 @@ MonoBehaviour:
     baseCost: 5
     maxLevel: 5
     effectPerLevel: 0.2
+    hiveEffectPerLevel: 0
   - type: 1
     displayName: Attack Damage
     baseCost: 8
     maxLevel: 5
     effectPerLevel: 1
+    hiveEffectPerLevel: 0
   - type: 2
     displayName: Max Health
     baseCost: 6
     maxLevel: 5
     effectPerLevel: 2
+    hiveEffectPerLevel: 10
   beeHealth: {fileID: 0}
+  hiveHealth: {fileID: 0}
 --- !u!1 &1405325622
 GameObject:
   m_ObjectHideFlags: 0
@@ -3545,7 +3550,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1116, y: -656.3}
+  m_AnchoredPosition: {x: 809, y: -656.3}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1455669845

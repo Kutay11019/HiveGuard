@@ -58,7 +58,7 @@ public class PrototypeResultManager : MonoBehaviour
             "You Lost!",
             defeatMessage,
             showRestartButton: true,
-            showMainMenuButton: false
+            showMainMenuButton: true
         );
     }
 
