@@ -7,6 +7,11 @@ public class PollenInventory : MonoBehaviour
 
     public void AddPollen(int amount)
     {
+        if (amount <= 0)
+        {
+            return;
+        }
+
         CurrentPollen += amount;
         Debug.Log("Pollen collected. Current pollen: " + CurrentPollen);
     }
@@ -14,9 +19,12 @@ public class PollenInventory : MonoBehaviour
     public int DepositCarriedToHive()
     {
         int deposited = CurrentPollen;
+
         StoredPollen += deposited;
         CurrentPollen = 0;
+
         Debug.Log("Pollen delivered. Deposited: " + deposited + ", hive total: " + StoredPollen);
+
         return deposited;
     }
 
@@ -26,10 +34,24 @@ public class PollenInventory : MonoBehaviour
         Debug.Log("Pollen carried inventory cleared.");
     }
 
+    public void SetCurrentPollen(int amount)
+    {
+        CurrentPollen = Mathf.Max(0, amount);
+        Debug.Log("Carried pollen set to " + CurrentPollen);
+    }
+
     public void SetStoredPollen(int amount)
     {
         StoredPollen = Mathf.Max(0, amount);
         Debug.Log("Hive pollen set to " + StoredPollen);
+    }
+
+    public void SetPollenSnapshot(int carriedAmount, int storedAmount)
+    {
+        CurrentPollen = Mathf.Max(0, carriedAmount);
+        StoredPollen = Mathf.Max(0, storedAmount);
+
+        Debug.Log("Pollen snapshot restored. Carried: " + CurrentPollen + ", Stored: " + StoredPollen);
     }
 
     public bool TrySpendStoredPollen(int amount)
@@ -46,6 +68,7 @@ public class PollenInventory : MonoBehaviour
 
         StoredPollen -= amount;
         Debug.Log("Spent " + amount + " stored pollen. Hive remaining: " + StoredPollen);
+
         return true;
     }
 
@@ -63,6 +86,7 @@ public class PollenInventory : MonoBehaviour
 
         CurrentPollen -= amount;
         Debug.Log("Spent " + amount + " carried pollen. Remaining: " + CurrentPollen);
+
         return true;
     }
 }

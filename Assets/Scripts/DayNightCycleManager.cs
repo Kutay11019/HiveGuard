@@ -59,11 +59,15 @@ public class DayNightCycleManager : MonoBehaviour
 
     private int beeHealthAtDayStart;
     private int hiveHealthAtDayStart;
-    private bool hasDayStartCheckpoint;
     private int beeMaxHealthAtDayStart;
     private int hiveMaxHealthAtDayStart;
-    private Dictionary<UpgradeType, int> upgradeLevelsAtDayStart;
+
+    private int carriedPollenAtDayStart;
     private int storedPollenAtDayStart;
+
+    private bool hasDayStartCheckpoint;
+
+    private Dictionary<UpgradeType, int> upgradeLevelsAtDayStart;
 
     public int CurrentDay => currentDay;
     public bool IsDayPhase => currentPhase == GamePhase.Day;
@@ -136,7 +140,7 @@ public class DayNightCycleManager : MonoBehaviour
     {
         currentDay = Mathf.Clamp(currentDay, 1, totalDays);
 
-        // İlk gün başlarken mevcut canlar checkpoint olur.
+        // İlk gün başlarken mevcut durum checkpoint olur.
         StartDayPhase(true);
     }
 
@@ -174,6 +178,7 @@ public class DayNightCycleManager : MonoBehaviour
         currentPhase = GamePhase.Day;
         currentTimer = dayDuration;
         isTimerRunning = true;
+        isWaitingForNightConfirmation = false;
 
         if (resultManager != null)
         {
@@ -213,7 +218,9 @@ public class DayNightCycleManager : MonoBehaviour
         Debug.Log(
             "Day " + currentDay + " started. " +
             "Bee checkpoint HP: " + beeHealthAtDayStart +
-            ", Hive checkpoint HP: " + hiveHealthAtDayStart
+            ", Hive checkpoint HP: " + hiveHealthAtDayStart +
+            ", Carried Pollen checkpoint: " + carriedPollenAtDayStart +
+            ", Stored Pollen checkpoint: " + storedPollenAtDayStart
         );
     }
 
@@ -222,6 +229,7 @@ public class DayNightCycleManager : MonoBehaviour
         currentPhase = GamePhase.Night;
         currentTimer = nightDuration;
         isTimerRunning = true;
+        isWaitingForNightConfirmation = false;
 
         if (pollenSpawnManager != null)
         {
@@ -306,6 +314,7 @@ public class DayNightCycleManager : MonoBehaviour
 
         isWaitingForNightConfirmation = true;
         isTimerRunning = false;
+
         nightTransitionPanel.Show();
     }
 
@@ -332,8 +341,9 @@ public class DayNightCycleManager : MonoBehaviour
 
         currentDay++;
 
-        // Yeni gün başlıyor ama can fullenmiyor.
+        // Yeni gün başlıyor.
         // Gece sonunda ne kaldıysa, yeni günün başlangıç checkpoint'i o oluyor.
+        // Burada carried pollen de kaydedilecek.
         StartDayPhase(true);
     }
 
@@ -341,6 +351,7 @@ public class DayNightCycleManager : MonoBehaviour
     {
         currentPhase = GamePhase.GameComplete;
         isTimerRunning = false;
+        isWaitingForNightConfirmation = false;
 
         ClearNightEnemies();
 
@@ -396,6 +407,7 @@ public class DayNightCycleManager : MonoBehaviour
 
         currentPhase = GamePhase.GameOver;
         isTimerRunning = false;
+        isWaitingForNightConfirmation = false;
 
         ClearNightEnemies();
 
@@ -436,7 +448,7 @@ public class DayNightCycleManager : MonoBehaviour
         RestoreDayStartCheckpoint();
 
         // Aynı günü yeniden başlatıyoruz ama checkpoint'i tekrar kaydetmiyoruz.
-        // Çünkü checkpoint zaten o günün başındaki can değerleri.
+        // Çünkü checkpoint zaten o günün başındaki değerleri temsil ediyor.
         StartDayPhase(false);
     }
 
@@ -445,22 +457,14 @@ public class DayNightCycleManager : MonoBehaviour
         if (beeHealth != null)
         {
             beeHealthAtDayStart = beeHealth.CurrentHealth;
+            beeMaxHealthAtDayStart = beeHealth.MaxHealth;
         }
 
         if (hiveHealth != null)
         {
             hiveHealthAtDayStart = hiveHealth.CurrentHealth;
-        }
-
-        if (beeHealth != null)
-        {
-            beeMaxHealthAtDayStart = beeHealth.MaxHealth;
-        }
-        if (hiveHealth != null)
-        {
             hiveMaxHealthAtDayStart = hiveHealth.MaxHealth;
         }
-
 
         if (UpgradeManager.Instance != null)
         {
@@ -469,6 +473,7 @@ public class DayNightCycleManager : MonoBehaviour
 
         if (pollenInventory != null)
         {
+            carriedPollenAtDayStart = pollenInventory.CurrentPollen;
             storedPollenAtDayStart = pollenInventory.StoredPollen;
         }
 
@@ -481,6 +486,7 @@ public class DayNightCycleManager : MonoBehaviour
             ", Hive HP: " + hiveHealthAtDayStart +
             ", Bee MaxHP: " + beeMaxHealthAtDayStart +
             ", Hive MaxHP: " + hiveMaxHealthAtDayStart +
+            ", Carried Pollen: " + carriedPollenAtDayStart +
             ", Hive Pollen: " + storedPollenAtDayStart
         );
     }
@@ -511,6 +517,7 @@ public class DayNightCycleManager : MonoBehaviour
 
         if (pollenInventory != null)
         {
+            pollenInventory.SetCurrentPollen(carriedPollenAtDayStart);
             pollenInventory.SetStoredPollen(storedPollenAtDayStart);
         }
 
@@ -521,6 +528,7 @@ public class DayNightCycleManager : MonoBehaviour
             ", Hive HP: " + hiveHealthAtDayStart +
             ", Bee MaxHP: " + beeMaxHealthAtDayStart +
             ", Hive MaxHP: " + hiveMaxHealthAtDayStart +
+            ", Carried Pollen: " + carriedPollenAtDayStart +
             ", Hive Pollen: " + storedPollenAtDayStart
         );
     }
