@@ -372,8 +372,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35
-  m_fontSizeBase: 35
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1009,8 +1009,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -134.19983, y: 109.999985}
-  m_SizeDelta: {x: 255.7, y: 90}
+  m_AnchoredPosition: {x: -161, y: 109.999985}
+  m_SizeDelta: {x: 300, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &306320000
 MonoBehaviour:
@@ -2006,7 +2006,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 65, y: 65}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &807010386
 MonoBehaviour:
@@ -3219,6 +3219,7 @@ MonoBehaviour:
   playerBeeTransform: {fileID: 240237330}
   playerDayStartPoint: {fileID: 712689149}
   pollenSpawnManager: {fileID: 16656591}
+  pollenInventory: {fileID: 0}
   directionalLight: {fileID: 1405325623}
   dayLightIntensity: 1.2
   nightLightIntensity: 0.35
@@ -3265,17 +3266,21 @@ MonoBehaviour:
     baseCost: 5
     maxLevel: 5
     effectPerLevel: 0.2
+    hiveEffectPerLevel: 0
   - type: 1
     displayName: Attack Damage
     baseCost: 8
     maxLevel: 5
     effectPerLevel: 1
+    hiveEffectPerLevel: 0
   - type: 2
     displayName: Max Health
     baseCost: 6
     maxLevel: 5
     effectPerLevel: 2
+    hiveEffectPerLevel: 10
   beeHealth: {fileID: 0}
+  hiveHealth: {fileID: 0}
 --- !u!1 &1405325622
 GameObject:
   m_ObjectHideFlags: 0
@@ -4574,7 +4579,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 110.00004, y: 109.999985}
-  m_SizeDelta: {x: 140, y: 140}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1748899605
 MonoBehaviour:
