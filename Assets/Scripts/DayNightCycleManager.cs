@@ -38,6 +38,14 @@ public class DayNightCycleManager : MonoBehaviour
     [SerializeField] private float dayLightIntensity = 1.2f;
     [SerializeField] private float nightLightIntensity = 0.35f;
 
+    [Header("Ambient")]
+    [SerializeField] private float dayAmbientIntensity = 1f;
+    [SerializeField] private float nightAmbientIntensity = 0.25f;
+    [SerializeField] private float dayReflectionIntensity = 1f;
+    [SerializeField] private float nightReflectionIntensity = 0.25f;
+    [SerializeField] private Color dayAmbientColor = new Color(0.55f, 0.55f, 0.55f, 1f);
+    [SerializeField] private Color nightAmbientColor = new Color(0.10f, 0.14f, 0.28f, 1f);
+
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI phaseText;
     [SerializeField] private TextMeshProUGUI timerText;
@@ -136,6 +144,9 @@ public class DayNightCycleManager : MonoBehaviour
     {
         currentDay = Mathf.Clamp(currentDay, 1, totalDays);
 
+        // Skybox SH yerine elle kontrol edebilmek için ambient'i Flat moda al.
+        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+
         // İlk gün başlarken mevcut canlar checkpoint olur.
         StartDayPhase(true);
     }
@@ -198,6 +209,10 @@ public class DayNightCycleManager : MonoBehaviour
             directionalLight.intensity = dayLightIntensity;
         }
 
+        RenderSettings.ambientIntensity = dayAmbientIntensity;
+        RenderSettings.ambientLight = dayAmbientColor;
+        RenderSettings.reflectionIntensity = dayReflectionIntensity;
+
         UpdatePhaseUI(
             "DAY " + currentDay,
             "Collect pollen and deliver it to the hive!"
@@ -234,6 +249,10 @@ public class DayNightCycleManager : MonoBehaviour
         {
             directionalLight.intensity = nightLightIntensity;
         }
+
+        RenderSettings.ambientIntensity = nightAmbientIntensity;
+        RenderSettings.ambientLight = nightAmbientColor;
+        RenderSettings.reflectionIntensity = nightReflectionIntensity;
 
         UpdatePhaseUI(
             "NIGHT " + currentDay,

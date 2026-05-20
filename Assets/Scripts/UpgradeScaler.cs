@@ -7,7 +7,7 @@ public class UpgradeScaler : MonoBehaviour
     [SerializeField] private UpgradeType watchedUpgradeType = UpgradeType.MaxHealth;
 
     [Header("Scaling")]
-    [SerializeField] private float scalePerLevel = 0.1f;
+    [SerializeField] private float scalePerLevel = 0.3f;
     [SerializeField] private float tweenDuration = 0.25f;
     [SerializeField] private AnimationCurve tweenCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
