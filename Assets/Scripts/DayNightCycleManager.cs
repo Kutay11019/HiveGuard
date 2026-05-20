@@ -151,7 +151,6 @@ public class DayNightCycleManager : MonoBehaviour
         // Skybox SH yerine elle kontrol edebilmek için ambient'i Flat moda al.
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
 
-        // İlk gün başlarken mevcut durum checkpoint olur.
         StartDayPhase(true);
     }
 
