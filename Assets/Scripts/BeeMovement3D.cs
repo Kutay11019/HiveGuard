@@ -21,7 +21,7 @@ public class BeeMovement3D : MonoBehaviour
     [SerializeField] private float minX = -8.5f;
     [SerializeField] private float maxX = 8.5f;
     [SerializeField] private float minZ = -9.5f;
-    [SerializeField] private float maxZ = -0.2f;
+    [SerializeField] private float maxZ = 3.5f;
 
     private Rigidbody rb;
     private Vector3 movementInput;
